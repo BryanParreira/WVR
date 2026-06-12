@@ -1,0 +1,225 @@
+import { type NextRequest, NextResponse } from "next/server"
+import { contactSchema } from "@/lib/validations"
+
+// Rate limiting — only active when Upstash env vars are present
+async function applyRateLimit(ip: string): Promise<{ allowed: boolean; retryAfter?: number }> {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return { allowed: true }
+  }
+  try {
+    const { checkRateLimit } = await import("@/lib/rate-limit")
+    const { success, reset } = await checkRateLimit(ip)
+    if (!success) {
+      return { allowed: false, retryAfter: Math.ceil((reset - Date.now()) / 1000) }
+    }
+    return { allowed: true }
+  } catch {
+    // Fail open — don't block legitimate users if Redis is unreachable
+    return { allowed: true }
+  }
+}
+
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown"
+  )
+}
+
+export async function POST(req: NextRequest) {
+  // 1. Rate limiting
+  const ip = getClientIp(req)
+  const { allowed, retryAfter } = await applyRateLimit(ip)
+  if (!allowed) {
+    return NextResponse.json(
+      { message: "Too many requests. Please wait before trying again." },
+      {
+        status: 429,
+        headers: retryAfter ? { "Retry-After": String(retryAfter) } : undefined,
+      }
+    )
+  }
+
+  // 2. Parse body
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 })
+  }
+
+  // 3. Validate with Zod
+  const result = contactSchema.safeParse(body)
+  if (!result.success) {
+    return NextResponse.json(
+      { message: "Validation failed.", errors: result.error.flatten().fieldErrors },
+      { status: 422 }
+    )
+  }
+
+  const { name, email, company, service, message, honeypot } = result.data
+
+  // 4. Honeypot check
+  if (honeypot && honeypot.length > 0) {
+    // Return 200 to fool bots — do nothing
+    return NextResponse.json({ message: "Message received." }, { status: 200 })
+  }
+
+  // 5. Store in Supabase (if configured)
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    try {
+      const { createClient } = await import("@supabase/supabase-js")
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      )
+      await supabase.from("contact_submissions").insert({
+        name,
+        email,
+        company: company ?? null,
+        service,
+        message,
+        ip_hash: Buffer.from(ip).toString("base64"),
+        created_at: new Date().toISOString(),
+      })
+    } catch (err) {
+      console.error("[contact] Supabase insert failed:", err)
+      // Non-fatal — still respond success to user; log for ops review
+    }
+  }
+
+  // 6. Send email notification via Resend (if configured)
+  if (process.env.RESEND_API_KEY && process.env.CONTACT_EMAIL_TO) {
+    try {
+      const { Resend } = await import("resend")
+      const resend = new Resend(process.env.RESEND_API_KEY)
+
+      const serviceLabel: Record<string, string> = {
+        "ai-automation":    "AI & Agentic Automation",
+        "cybersecurity":    "Proactive Cybersecurity",
+        "digital-marketing":"Digital Marketing & GEO",
+        "custom-software":  "Custom Software Development",
+        "web-development":  "High-Performance Web Dev",
+        "data-intelligence":"Data Intelligence",
+        "other":            "Other / Not Sure Yet",
+      }
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>New Inquiry</title>
+</head>
+<body style="margin:0;padding:0;background:#f7f7f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f7f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- Header -->
+        <tr>
+          <td style="background:#141210;border-radius:12px 12px 0 0;padding:32px 40px;">
+            <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6b6760;font-family:'Courier New',monospace;">WebVisionRank</p>
+            <h1 style="margin:0;font-size:22px;font-weight:600;color:#f0ede8;letter-spacing:-0.015em;">New project inquiry</h1>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="background:#ffffff;padding:0 40px 8px;">
+
+            <!-- Client fields -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;">
+              <tr>
+                <td style="padding-bottom:20px;border-bottom:1px solid #ebebeb;">
+                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Name</p>
+                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${name}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Email</p>
+                  <a href="mailto:${email}" style="margin:0;font-size:15px;color:#0891b2;font-weight:500;text-decoration:none;">${email}</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Company</p>
+                  <p style="margin:0;font-size:15px;color:#111827;">${company ?? "—"}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Service of interest</p>
+                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${serviceLabel[service] ?? service}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 0 32px;">
+                  <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Project details</p>
+                  <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;white-space:pre-wrap;">${message}</p>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+
+        <!-- Reply CTA -->
+        <tr>
+          <td style="background:#ffffff;padding:0 40px 32px;">
+            <a href="mailto:${email}?subject=Re: Your inquiry — WebVisionRank"
+               style="display:inline-block;background:#141210;color:#f0ede8;font-size:13px;font-weight:500;padding:11px 24px;border-radius:8px;text-decoration:none;letter-spacing:-0.01em;">
+              Reply to ${name} →
+            </a>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f7f7f4;border-radius:0 0 12px 12px;padding:20px 40px;border-top:1px solid #e5e5e0;">
+            <p style="margin:0;font-size:12px;color:#9ca3af;">Submitted via webvisionrank.com/contact · ${new Date().toUTCString()}</p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
+
+      await resend.emails.send({
+        from: "WebVisionRank <noreply@webvisionrank.com>",
+        to: process.env.CONTACT_EMAIL_TO,
+        replyTo: email,
+        subject: `New inquiry: ${serviceLabel[service] ?? service} — ${name}`,
+        html,
+        text: [
+          `Name: ${name}`,
+          `Email: ${email}`,
+          `Company: ${company ?? "Not provided"}`,
+          `Service: ${serviceLabel[service] ?? service}`,
+          `\nMessage:\n${message}`,
+          `\nSubmitted: ${new Date().toUTCString()}`,
+        ].join("\n"),
+      })
+    } catch (err) {
+      console.error("[contact] Resend email failed:", err)
+      // Non-fatal
+    }
+  }
+
+  return NextResponse.json(
+    { message: "Message received. We'll be in touch within 24 hours." },
+    { status: 200 }
+  )
+}
+
+// Reject non-POST methods
+export async function GET() {
+  return NextResponse.json({ message: "Method not allowed." }, { status: 405 })
+}
