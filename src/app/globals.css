@@ -136,6 +136,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--canvas);
   color: var(--ink);
+  /* Prevent momentum scroll bounce interrupting smooth-scroll */
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -144,6 +146,8 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
+  /* GPU-promote the scroll container for composited scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── Display Typography Utilities ──────────────────────────────────── */

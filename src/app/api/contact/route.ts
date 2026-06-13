@@ -60,6 +60,20 @@ export async function POST(req: NextRequest) {
 
   const { name, email, company, service, message, honeypot } = result.data
 
+  // Escape all user input before HTML interpolation to prevent injection in email
+  function h(s: string): string {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;")
+  }
+  const sName    = h(name)
+  const sEmail   = h(email)
+  const sCompany = company ? h(company) : "—"
+  const sMessage = h(message)
+
   // 4. Honeypot check
   if (honeypot && honeypot.length > 0) {
     // Return 200 to fool bots — do nothing
@@ -137,31 +151,31 @@ export async function POST(req: NextRequest) {
               <tr>
                 <td style="padding-bottom:20px;border-bottom:1px solid #ebebeb;">
                   <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Name</p>
-                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${name}</p>
+                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${sName}</p>
                 </td>
               </tr>
               <tr>
                 <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
                   <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Email</p>
-                  <a href="mailto:${email}" style="margin:0;font-size:15px;color:#0891b2;font-weight:500;text-decoration:none;">${email}</a>
+                  <a href="mailto:${sEmail}" style="margin:0;font-size:15px;color:#0891b2;font-weight:500;text-decoration:none;">${sEmail}</a>
                 </td>
               </tr>
               <tr>
                 <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
                   <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Company</p>
-                  <p style="margin:0;font-size:15px;color:#111827;">${company ?? "—"}</p>
+                  <p style="margin:0;font-size:15px;color:#111827;">${sCompany}</p>
                 </td>
               </tr>
               <tr>
                 <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
                   <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Service of interest</p>
-                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${serviceLabel[service] ?? service}</p>
+                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${h(serviceLabel[service] ?? service)}</p>
                 </td>
               </tr>
               <tr>
                 <td style="padding:20px 0 32px;">
                   <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Project details</p>
-                  <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;white-space:pre-wrap;">${message}</p>
+                  <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;white-space:pre-wrap;">${sMessage}</p>
                 </td>
               </tr>
             </table>
@@ -172,9 +186,9 @@ export async function POST(req: NextRequest) {
         <!-- Reply CTA -->
         <tr>
           <td style="background:#ffffff;padding:0 40px 32px;">
-            <a href="mailto:${email}?subject=Re: Your inquiry — WebVisionRank"
+            <a href="mailto:${sEmail}?subject=Re: Your inquiry — WebVisionRank"
                style="display:inline-block;background:#141210;color:#f0ede8;font-size:13px;font-weight:500;padding:11px 24px;border-radius:8px;text-decoration:none;letter-spacing:-0.01em;">
-              Reply to ${name} →
+              Reply to ${sName} →
             </a>
           </td>
         </tr>
@@ -196,7 +210,7 @@ export async function POST(req: NextRequest) {
         from: "WebVisionRank <noreply@webvisionrank.com>",
         to: process.env.CONTACT_EMAIL_TO,
         replyTo: email,
-        subject: `New inquiry: ${serviceLabel[service] ?? service} — ${name}`,
+        subject: `New inquiry: ${serviceLabel[service] ?? service} — ${name.replace(/[\r\n]/g, " ")}`,
         html,
         text: [
           `Name: ${name}`,

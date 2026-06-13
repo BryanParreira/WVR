@@ -61,6 +61,14 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
     siteName: SITE_CONFIG.name,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -68,6 +76,7 @@ export const metadata: Metadata = {
     creator: "@webvisionrank",
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -78,6 +87,12 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f7f4" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0f0e0c" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

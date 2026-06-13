@@ -3,7 +3,7 @@ import { SiteLayout } from "@/components/layout/site-layout"
 import { ServicesGrid } from "@/components/sections/services-grid"
 import { CtaBanner } from "@/components/sections/cta-banner"
 import { AnimateIn } from "@/components/ui/animate-in"
-import { ServicePageJsonLd } from "@/components/seo/json-ld"
+import { ServicePageJsonLd, HowToAiAutomationJsonLd, HowToGeoJsonLd } from "@/components/seo/json-ld"
 import { FlipWords } from "@/components/ui/flip-words"
 import { EncryptedText } from "@/components/ui/encrypted-text"
 
@@ -37,6 +37,8 @@ export default function ServicesPage() {
   return (
     <SiteLayout>
       <ServicePageJsonLd />
+      <HowToAiAutomationJsonLd />
+      <HowToGeoJsonLd />
       <section className="pt-12 pb-4 px-6 sm:pt-20 bg-canvas">
         <div className="mx-auto max-w-[1200px]">
           <AnimateIn>

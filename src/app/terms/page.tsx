@@ -6,6 +6,13 @@ import { SITE_CONFIG } from "@/lib/constants"
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "WebVisionRank Terms of Service — governing your use of our website and services.",
+  robots: { index: false, follow: false },
+  alternates: { canonical: "https://webvisionrank.com/terms" },
+  openGraph: {
+    title: "Terms of Service — WebVisionRank",
+    description: "Terms governing your use of WebVisionRank's website and services.",
+    url: "https://webvisionrank.com/terms",
+  },
 }
 
 const EFFECTIVE_DATE = "June 1, 2025"

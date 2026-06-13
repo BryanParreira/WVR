@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Shield, Bot, Code2, TrendingUp } from "lucide-react"
 import { SiteLayout } from "@/components/layout/site-layout"
+import { AboutPageJsonLd } from "@/components/seo/json-ld"
 import { AnimateIn, StaggerContainer, StaggerItem } from "@/components/ui/animate-in"
 import { Button } from "@/components/ui/button"
 import { CtaBanner } from "@/components/sections/cta-banner"
@@ -73,6 +74,7 @@ const differentiators = [
 export default function AboutPage() {
   return (
     <SiteLayout>
+      <AboutPageJsonLd />
       {/* Hero */}
       <section className="pt-12 pb-12 px-6 sm:pt-20 sm:pb-16 bg-canvas">
         <div className="mx-auto max-w-[1200px]">

@@ -22,11 +22,15 @@ export function EncryptedText({
   scrambleOnMount = true,
   trigger = "inView",
 }: EncryptedTextProps) {
-  const [display, setDisplay] = useState(scrambleOnMount ? randomize(text) : text)
+  // Always start with real text to match SSR — scramble begins after mount
+  const [display, setDisplay] = useState(text)
+  const [mounted, setMounted] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once: true, margin: "-60px" })
   const rafRef = useRef<number | null>(null)
   const resolvedRef = useRef(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   function randomize(str: string) {
     return str
@@ -62,7 +66,9 @@ export function EncryptedText({
   }
 
   useEffect(() => {
+    if (!mounted) return
     if (trigger === "inView" && isInView) {
+      if (scrambleOnMount) setDisplay(randomize(text))
       const t = setTimeout(resolve, delay)
       return () => {
         clearTimeout(t)
@@ -70,6 +76,7 @@ export function EncryptedText({
       }
     }
     if (trigger === "always") {
+      if (scrambleOnMount) setDisplay(randomize(text))
       const t = setTimeout(resolve, delay)
       return () => {
         clearTimeout(t)
@@ -77,7 +84,7 @@ export function EncryptedText({
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInView, trigger, delay])
+  }, [mounted, isInView, trigger, delay])
 
   return (
     <span ref={ref} className={className} aria-label={text} style={{ fontFamily: "inherit" }}>

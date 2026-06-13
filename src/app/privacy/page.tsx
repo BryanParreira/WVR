@@ -5,7 +5,14 @@ import { SITE_CONFIG } from "@/lib/constants"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "WebVisionRank Privacy Policy — how we collect, use, and protect your data.",
+  description: "WebVisionRank Privacy Policy — how we collect, use, and protect your personal data.",
+  robots: { index: false, follow: false },
+  alternates: { canonical: "https://webvisionrank.com/privacy" },
+  openGraph: {
+    title: "Privacy Policy — WebVisionRank",
+    description: "How WebVisionRank collects, uses, and protects your data.",
+    url: "https://webvisionrank.com/privacy",
+  },
 }
 
 const EFFECTIVE_DATE = "June 1, 2025"

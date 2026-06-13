@@ -186,6 +186,11 @@ export function CapabilitiesSection() {
                   Security architected from the first line of code. Continuous monitoring,
                   red teaming, and Zero Trust by default.
                 </p>
+                <Bullets accent={A.security} items={[
+                  "Zero Trust architecture design",
+                  "Penetration testing & red teaming",
+                  "Continuous vulnerability monitoring",
+                ]} />
               </div>
               <LiveScanBar />
             </BentoCard>
@@ -203,6 +208,11 @@ export function CapabilitiesSection() {
                   Bespoke applications built to exact specs — measured in milliseconds,
                   Lighthouse scores, and uptime.
                 </p>
+                <Bullets accent={A.dev} items={[
+                  "Full stack web & mobile apps",
+                  "API design & microservices",
+                  "CI/CD pipelines & DevOps",
+                ]} />
               </div>
               <LiveUptimeBars />
             </BentoCard>

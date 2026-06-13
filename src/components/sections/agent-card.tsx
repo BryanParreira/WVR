@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
-import { useInView } from "framer-motion"
+import { useEffect, useRef, useState, useCallback, useMemo } from "react"
+import { useInView, AnimatePresence, motion } from "framer-motion"
 import { SITE_CONFIG } from "@/lib/constants"
 
 const D = {
@@ -16,7 +16,7 @@ const D = {
   primary: "#22b5d4",
 }
 
-// delay = ms to wait before rendering this line (simulates execution time)
+// delay = ms to wait before revealing this line
 type Line          = { text: string; color?: string; delay?: number }
 type HistoryEntry  = { command: string; lines: Line[] }
 type ActiveOutput  = { command: string; lines: Line[]; revealed: number }
@@ -26,7 +26,7 @@ const WELCOME: Line[] = [
   { text: "─".repeat(46), color: D.dim },
   { text: "AI automation · Zero Trust security · Elite dev" },
   { text: "" },
-  { text: "Type 'help' or watch the demo.", color: D.muted },
+  { text: "Type a command or click a suggestion below.", color: D.muted },
   { text: "" },
 ]
 
@@ -70,7 +70,7 @@ const RUN_WORKFLOWS: Record<string, () => Line[]> = {
   ],
 }
 
-// ─── static commands ───────────────────────────────────────────────────────────
+// ─── Static commands ───────────────────────────────────────────────────────────
 const CMDS: Record<string, () => Line[]> = {
   help: () => [
     { text: "Commands:", color: D.ink },
@@ -231,11 +231,21 @@ const CMDS: Record<string, () => Line[]> = {
   ],
 }
 
-const TAB_COMPLETIONS = [
+const ALL_COMPLETIONS = [
   ...Object.keys(CMDS),
   "run crm-automation",
   "run content-pipeline",
   "run invoice-processor",
+]
+
+// Quick-access chips shown when focused + no input
+const QUICK_CHIPS = [
+  { label: "services",           desc: "what we build"    },
+  { label: "ai",                 desc: "AI & automation"  },
+  { label: "run crm-automation", desc: "live agent demo"  },
+  { label: "security",           desc: "Zero Trust"       },
+  { label: "status",             desc: "system status"    },
+  { label: "pricing",            desc: "tiers"            },
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -254,11 +264,22 @@ export function AgentCard() {
   const [focused,  setFocused]  = useState(false)
   const [cursorOn, setCursorOn] = useState(true)
   const [ready,    setReady]    = useState(false)
+  const [suggIdx,  setSuggIdx]  = useState(-1)
 
-  // Auto-demo state (refs to avoid stale closures)
+  // Auto-demo refs
   const userInteractedRef = useRef(false)
   const autoIdsRef        = useRef<ReturnType<typeof setTimeout>[]>([])
-  const autoPhaseRef      = useRef(0) // 0=init · 1=pending-services · 2=pending-run · 3=done
+  const autoPhaseRef      = useRef(0)
+
+  // Suggestions computed from input
+  const suggestions = useMemo(() => {
+    const val = input.trim().toLowerCase()
+    if (!val) return []
+    return ALL_COMPLETIONS.filter(c => c.startsWith(val)).slice(0, 6)
+  }, [input])
+
+  // Reset suggIdx when suggestions change
+  useEffect(() => { setSuggIdx(-1) }, [suggestions])
 
   const cancelAuto = useCallback(() => {
     userInteractedRef.current = true
@@ -305,6 +326,7 @@ export function AgentCard() {
   const run = useCallback((cmd: string) => {
     const t = cmd.trim().toLowerCase()
     if (!t) return
+    setSuggIdx(-1)
 
     if (t === "clear") {
       setHistory([])
@@ -366,12 +388,10 @@ export function AgentCard() {
     autoIdsRef.current.push(setTimeout(type, 60))
   }, [run])
 
-  // Phase advancement — fires when active output finishes (active becomes null)
+  // Phase advancement — fires when output animation finishes
   useEffect(() => {
     if (active !== null || !ready || userInteractedRef.current) return
-
     if (autoPhaseRef.current === 0 && history.length === 1 && history[0].command === "") {
-      // Welcome done → type "services" after 2.5s
       autoPhaseRef.current = 1
       autoIdsRef.current.push(setTimeout(() => {
         if (!userInteractedRef.current) autoType("services")
@@ -381,20 +401,18 @@ export function AgentCard() {
       history.length >= 2 &&
       history[history.length - 1].command === "services"
     ) {
-      // services done → type "run crm-automation" after 2s
       autoPhaseRef.current = 2
       autoIdsRef.current.push(setTimeout(() => {
         if (!userInteractedRef.current) autoType("run crm-automation")
       }, 2000))
     } else if (autoPhaseRef.current === 2 && history.length >= 3) {
-      autoPhaseRef.current = 3 // done
+      autoPhaseRef.current = 3
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, history, ready])
 
   // ─── Input handlers ──────────────────────────────────────────────────────────
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Any key skips current animation
     if (active) {
       e.preventDefault()
       setActive(a => a ? { ...a, revealed: a.lines.length } : null)
@@ -402,29 +420,51 @@ export function AgentCard() {
     }
     if (e.key === "Enter") {
       e.preventDefault()
-      run(input)
-      setInput("")
+      if (suggestions.length > 0 && suggIdx >= 0) {
+        const picked = suggestions[suggIdx]
+        setInput(picked)
+        setSuggIdx(-1)
+        // Run immediately if it's a complete command
+        setInput("")
+        run(picked)
+      } else {
+        run(input)
+        setInput("")
+      }
     } else if (e.key === "Tab") {
       e.preventDefault()
-      const val = input.trim().toLowerCase()
-      if (!val) return
-      const match = TAB_COMPLETIONS.find(c => c.startsWith(val))
-      if (match) setInput(match)
+      if (suggestions.length === 0) return
+      const nextIdx = (suggIdx + 1) % suggestions.length
+      setSuggIdx(nextIdx)
+      setInput(suggestions[nextIdx])
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
-      const idx = Math.min(histIdx + 1, cmdHist.length - 1)
-      setHistIdx(idx)
-      if (cmdHist[idx] !== undefined) setInput(cmdHist[idx])
+      if (suggestions.length > 0) {
+        setSuggIdx(i => Math.max(i - 1, 0))
+      } else {
+        const idx = Math.min(histIdx + 1, cmdHist.length - 1)
+        setHistIdx(idx)
+        if (cmdHist[idx] !== undefined) setInput(cmdHist[idx])
+      }
     } else if (e.key === "ArrowDown") {
       e.preventDefault()
-      const idx = histIdx - 1
-      setHistIdx(idx)
-      setInput(idx < 0 ? "" : (cmdHist[idx] ?? ""))
+      if (suggestions.length > 0) {
+        setSuggIdx(i => (i < suggestions.length - 1 ? i + 1 : -1))
+      } else {
+        const idx = histIdx - 1
+        setHistIdx(idx)
+        setInput(idx < 0 ? "" : (cmdHist[idx] ?? ""))
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault()
+      setSuggIdx(-1)
+      if (input) setInput("")
     } else if (e.ctrlKey && e.key === "c") {
       e.preventDefault()
       setInput("")
+      setSuggIdx(-1)
     }
-  }, [active, input, run, histIdx, cmdHist])
+  }, [active, input, run, histIdx, cmdHist, suggestions, suggIdx])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (active) {
@@ -440,6 +480,17 @@ export function AgentCard() {
   }, [cancelAuto])
 
   const focusInput = useCallback(() => inputRef.current?.focus(), [])
+
+  const pickChip = useCallback((cmd: string) => {
+    setInput("")
+    setSuggIdx(-1)
+    run(cmd)
+    inputRef.current?.focus()
+  }, [run])
+
+  // Determine what to show in the suggestion strip
+  const showSuggestions = focused && !active && suggestions.length > 0
+  const showQuickChips  = focused && !active && !input && history.length > 0
 
   // ─── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -491,7 +542,7 @@ export function AgentCard() {
       {/* Terminal body */}
       <div
         ref={bodyRef}
-        className="h-[370px] overflow-y-auto p-5"
+        className="h-[340px] overflow-y-auto p-5"
         style={{ fontFamily: "var(--font-mono)", background: D.bg }}
       >
         {/* History */}
@@ -536,7 +587,11 @@ export function AgentCard() {
             <span style={{ color: D.muted, marginRight: 6 }}>~</span>
             <span style={{ color: D.primary, marginRight: 6 }}>$</span>
             <span style={{ color: D.body }}>
-              {input}
+              {/* Highlight matched prefix in suggestions */}
+              {suggIdx >= 0 && suggestions[suggIdx]
+                ? <span style={{ color: D.ink }}>{suggestions[suggIdx]}</span>
+                : input
+              }
               <span style={{
                 display: "inline-block", verticalAlign: "middle",
                 width: 7, height: 14, marginLeft: 1,
@@ -548,6 +603,92 @@ export function AgentCard() {
         )}
       </div>
 
+      {/* ── Suggestion / Quick-access strip ── */}
+      <AnimatePresence>
+        {(showSuggestions || showQuickChips) && (
+          <motion.div
+            key={showSuggestions ? "suggestions" : "quick"}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              overflow:    "hidden",
+              borderTop:   `1px solid ${D.border}`,
+              background:  D.surface,
+            }}
+          >
+            <div className="px-4 py-3">
+              {showSuggestions ? (
+                <>
+                  <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
+                    style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
+                    Completions — ↑↓ navigate · [tab] cycle · enter run
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {suggestions.map((s, i) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onMouseDown={e => { e.preventDefault(); pickChip(s) }}
+                        className="flex items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-[12px] transition-all duration-100"
+                        style={{
+                          background: i === suggIdx ? "rgba(240,237,232,0.09)" : "rgba(240,237,232,0.03)",
+                          border:     `1px solid ${i === suggIdx ? "rgba(240,237,232,0.22)" : D.border}`,
+                          color:      i === suggIdx ? D.ink : D.muted,
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        {s}
+                        {i === suggIdx && (
+                          <span className="text-[10px]" style={{ color: D.dim }}>↵</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
+                    style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
+                    Quick commands
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {QUICK_CHIPS.map(({ label, desc }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={e => { e.preventDefault(); pickChip(label) }}
+                        className="flex items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-[12px] transition-all duration-150 group"
+                        style={{
+                          background: "rgba(240,237,232,0.03)",
+                          border:     `1px solid ${D.border}`,
+                          color:      D.muted,
+                          fontFamily: "var(--font-mono)",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = "rgba(240,237,232,0.07)"
+                          e.currentTarget.style.borderColor = "rgba(240,237,232,0.15)"
+                          e.currentTarget.style.color = D.body
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = "rgba(240,237,232,0.03)"
+                          e.currentTarget.style.borderColor = D.border
+                          e.currentTarget.style.color = D.muted
+                        }}
+                      >
+                        <span>{label}</span>
+                        <span className="text-[10px]" style={{ color: D.dim }}>{desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Status bar */}
       <div
         className="flex items-center justify-between px-4 py-2"
@@ -558,12 +699,14 @@ export function AgentCard() {
         </span>
         <span className="text-[11px]" style={{ color: D.muted, fontFamily: "var(--font-mono)" }}>
           <span className="hidden sm:inline">
-            {focused
-              ? "↑↓ history · [tab] complete · enter · ctrl+c"
-              : "click to type · [tab] autocomplete"}
+            {showSuggestions
+              ? "↑↓ navigate · tab cycle · enter run · esc cancel"
+              : focused
+              ? "↑↓ history · tab complete · enter run · esc clear"
+              : "click to type · auto-demo active"}
           </span>
           <span className="sm:hidden">
-            {focused ? "↑↓ · tab · enter · ctrl+c" : "tap to type"}
+            {focused ? "↑↓ · tab · enter · esc" : "tap to type"}
           </span>
         </span>
       </div>
