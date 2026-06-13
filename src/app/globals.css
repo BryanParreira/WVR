@@ -44,6 +44,11 @@
   --timeline-grep:     #9fc9a2;
   --timeline-done:     #c08532;
 
+  /* Alpha ink tokens — adapt to theme */
+  --ink-faint:         rgba(38, 37, 30, 0.04);
+  --ink-subtle:        rgba(38, 37, 30, 0.07);
+  --shimmer-highlight: rgba(255, 255, 255, 0.65);
+
   /* Legacy compat aliases */
   --background:     var(--canvas);
   --foreground:     var(--ink);
@@ -122,6 +127,10 @@
   --on-primary:      #0f0e0c;
 
   --primary-border:  rgba(240, 237, 232, 0.20);
+
+  --ink-faint:         rgba(240, 237, 232, 0.04);
+  --ink-subtle:        rgba(240, 237, 232, 0.07);
+  --shimmer-highlight: rgba(240, 237, 232, 0.55);
 
   --shadow-border:        rgba(255,255,255,0.07) 0px 0px 0px 1px;
   --shadow-card:          rgba(255,255,255,0.06) 0px 0px 0px 1px, rgba(0,0,0,0.25) 0px 2px 8px, rgba(255,255,255,0.02) 0px 0px 0px 1px inset;
@@ -395,7 +404,7 @@ code, pre, kbd, samp {
     90deg,
     var(--ink) 0%,
     var(--ink) 38%,
-    rgba(240,237,232,0.55) 50%,
+    var(--shimmer-highlight) 50%,
     var(--ink) 62%,
     var(--ink) 100%
   );

@@ -42,14 +42,38 @@ export async function POST(req: NextRequest) {
   }
 
   // 2. Parse body
-  let body: unknown
+  let body: Record<string, unknown>
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ message: "Invalid request body." }, { status: 400 })
   }
 
-  // 3. Validate with Zod
+  // 3. Verify hCaptcha token
+  const captchaToken = typeof body.captchaToken === "string" ? body.captchaToken : ""
+  if (!captchaToken) {
+    return NextResponse.json({ message: "Captcha verification required." }, { status: 400 })
+  }
+  if (process.env.HCAPTCHA_SECRET_KEY) {
+    try {
+      const verifyRes = await fetch("https://hcaptcha.com/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret:   process.env.HCAPTCHA_SECRET_KEY,
+          response: captchaToken,
+        }).toString(),
+      })
+      const verifyData = await verifyRes.json() as { success: boolean }
+      if (!verifyData.success) {
+        return NextResponse.json({ message: "Captcha verification failed. Please try again." }, { status: 400 })
+      }
+    } catch {
+      return NextResponse.json({ message: "Could not verify captcha. Please try again." }, { status: 503 })
+    }
+  }
+
+  // 4. Validate with Zod
   const result = contactSchema.safeParse(body)
   if (!result.success) {
     return NextResponse.json(
@@ -74,13 +98,13 @@ export async function POST(req: NextRequest) {
   const sCompany = company ? h(company) : "—"
   const sMessage = h(message)
 
-  // 4. Honeypot check
+  // 5. Honeypot check
   if (honeypot && honeypot.length > 0) {
     // Return 200 to fool bots — do nothing
     return NextResponse.json({ message: "Message received." }, { status: 200 })
   }
 
-  // 5. Store in Supabase (if configured)
+  // 6. Store in Supabase (if configured)
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -106,7 +130,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 6. Send email notification via Resend (if configured)
+  // 7. Send email notification via Resend (if configured)
   if (process.env.RESEND_API_KEY && process.env.CONTACT_EMAIL_TO) {
     try {
       const { Resend } = await import("resend")

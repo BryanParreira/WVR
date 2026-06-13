@@ -8,13 +8,13 @@ import { GlowingEffect } from "@/components/ui/glowing-effect"
 import { TESTIMONIALS } from "@/lib/constants"
 
 const D = {
-  bg:      "#0e0d0b",
-  surface: "#161411",
-  border:  "#222018",
-  ink:     "#f0ede8",
-  body:    "#a09c92",
-  muted:   "#5e5b55",
-  dim:     "#3a3733",
+  bg:      "var(--canvas)",
+  surface: "var(--surface)",
+  border:  "var(--hairline)",
+  ink:     "var(--ink)",
+  body:    "var(--body)",
+  muted:   "var(--muted)",
+  dim:     "var(--muted-soft)",
 }
 
 function MonogramAvatar({ name }: { name: string }) {
@@ -22,7 +22,7 @@ function MonogramAvatar({ name }: { name: string }) {
   return (
     <div
       className="relative h-12 w-12 flex-shrink-0 rounded-full flex items-center justify-center"
-      style={{ background: "rgba(240,237,232,0.05)", border: `1px solid ${D.border}` }}
+      style={{ background: "var(--ink-faint)", border: `1px solid ${D.border}` }}
     >
       <span className="text-[14px] font-semibold tabular-nums" style={{ color: D.body }}>
         {initials}

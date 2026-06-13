@@ -1,22 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckCircle, Loader2, AlertCircle, ArrowRight } from "lucide-react"
+import HCaptcha from "@hcaptcha/react-hcaptcha"
 import { contactSchema, type ContactFormData } from "@/lib/validations"
 import { cn } from "@/lib/utils"
 
 const D = {
-  bg:      "#141210",
-  surface: "#1c1a17",
-  border:  "#2a2825",
-  ink:     "#f0ede8",
-  body:    "#a09c92",
-  muted:   "#6b6760",
-  dim:     "#3d3b37",
-  error:   "#cf2d56",
+  bg:      "var(--canvas-soft)",
+  surface: "var(--surface)",
+  border:  "var(--hairline)",
+  ink:     "var(--ink)",
+  body:    "var(--body)",
+  muted:   "var(--muted)",
+  dim:     "var(--muted-soft)",
+  error:   "var(--error)",
 }
 
 type FormState = "idle" | "submitting" | "success" | "error"
@@ -66,6 +67,8 @@ const fieldStyle = {
 export function ContactForm() {
   const [formState,    setFormState]    = useState<FormState>("idle")
   const [errorMessage, setErrorMessage] = useState("")
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const captchaRef = useRef<HCaptcha>(null)
   const { service: preselected, planLabel } = useFormContext()
 
   const {
@@ -80,13 +83,18 @@ export function ContactForm() {
   })
 
   async function onSubmit(data: ContactFormData) {
+    if (!captchaToken) {
+      setErrorMessage("Please complete the captcha before submitting.")
+      setFormState("error")
+      return
+    }
     setFormState("submitting")
     setErrorMessage("")
     try {
       const res = await fetch("/api/contact", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(data),
+        body:    JSON.stringify({ ...data, captchaToken }),
       })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
@@ -94,6 +102,8 @@ export function ContactForm() {
       }
       setFormState("success")
       reset()
+      setCaptchaToken(null)
+      captchaRef.current?.resetCaptcha()
     } catch (err) {
       setFormState("error")
       setErrorMessage(err instanceof Error ? err.message : "An unexpected error occurred.")
@@ -118,7 +128,7 @@ export function ContactForm() {
         <button
           onClick={() => setFormState("idle")}
           className="mt-1 h-9 px-4 rounded-[7px] text-[13px] font-medium transition-colors duration-150"
-          style={{ background: "rgba(240,237,232,0.06)", border: `1px solid ${D.border}`, color: D.body }}
+          style={{ background: "var(--ink-faint)", border: `1px solid ${D.border}`, color: D.body }}
           onMouseEnter={e => (e.currentTarget.style.color = D.ink)}
           onMouseLeave={e => (e.currentTarget.style.color = D.body)}
         >
@@ -140,7 +150,7 @@ export function ContactForm() {
       {/* Plan context badge */}
       {planLabel && (
         <div className="flex items-center gap-2 rounded-[8px] px-3 py-2.5"
-          style={{ background: "rgba(240,237,232,0.04)", border: `1px solid ${D.border}` }}>
+          style={{ background: "var(--ink-faint)", border: `1px solid ${D.border}` }}>
           <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: D.dim }} />
           <span className="text-[13px]" style={{ color: D.muted }}>
             Inquiring about the{" "}
@@ -223,8 +233,8 @@ export function ContactForm() {
                     onClick={() => field.onChange(opt.value)}
                     className="flex items-center gap-2 rounded-[8px] px-3 py-2.5 text-left text-[13px] leading-[1.3] transition-all duration-150"
                     style={{
-                      background:  sel ? "rgba(240,237,232,0.07)" : "rgba(240,237,232,0.02)",
-                      border:      `1px solid ${sel ? "rgba(240,237,232,0.2)" : D.border}`,
+                      background:  sel ? "var(--ink-subtle)" : "var(--ink-faint)",
+                      border:      `1px solid ${sel ? "var(--primary-border)" : D.border}`,
                       color:       sel ? D.ink : D.muted,
                     }}
                   >
@@ -270,12 +280,23 @@ export function ContactForm() {
         </div>
       )}
 
+      {/* Captcha */}
+      <div>
+        <HCaptcha
+          ref={captchaRef}
+          sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+          theme="dark"
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken(null)}
+        />
+      </div>
+
       {/* Submit */}
       <button
         type="submit"
         disabled={formState === "submitting"}
         className="group flex w-full items-center justify-center gap-2.5 h-12 rounded-[9px] text-[15px] font-medium transition-all duration-150 disabled:opacity-60"
-        style={{ background: D.ink, color: "#0e0d0b" }}
+        style={{ background: D.ink, color: "var(--canvas)" }}
       >
         {formState === "submitting" ? (
           <>

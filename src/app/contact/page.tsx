@@ -29,12 +29,12 @@ export const metadata: Metadata = {
 }
 
 const D = {
-  bg:      "#0e0d0b",
-  surface: "#161411",
-  border:  "#222018",
-  ink:     "#f0ede8",
-  body:    "#a09c92",
-  muted:   "#5e5b55",
+  bg:      "var(--canvas)",
+  surface: "var(--canvas-soft)",
+  border:  "var(--hairline)",
+  ink:     "var(--ink)",
+  body:    "var(--body)",
+  muted:   "var(--muted)",
 }
 
 const TRUST = [
@@ -103,7 +103,7 @@ export default function ContactPage() {
         {/* Subtle dot grid */}
         <div aria-hidden className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle, rgba(240,237,232,0.07) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, var(--ink-subtle) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
             opacity: 0.35,
           }} />
@@ -141,7 +141,7 @@ export default function ContactPage() {
                     <div className="animate-pulse space-y-5">
                       {[80, 80, 50, 130, 110].map((h, i) => (
                         <div key={i} className="rounded-[8px]"
-                          style={{ height: h, background: "rgba(240,237,232,0.04)" }} />
+                          style={{ height: h, background: "var(--ink-faint)" }} />
                       ))}
                     </div>
                   }>

@@ -294,7 +294,7 @@ export function Terminal({
   typingSpeed = 50,
   delayBetweenCommands = 800,
   initialDelay = 500,
-  enableSound = true,
+  enableSound = false,
 }: TerminalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

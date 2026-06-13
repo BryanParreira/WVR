@@ -14,12 +14,12 @@ import {
 } from "@/components/sections/live-widgets"
 
 const D = {
-  bg:      "#0e0d0b",
-  surface: "#161411",
-  border:  "#222018",
-  ink:     "#f0ede8",
-  body:    "#a09c92",
-  muted:   "#5e5b55",
+  bg:      "var(--canvas)",
+  surface: "var(--surface)",
+  border:  "var(--hairline)",
+  ink:     "var(--ink)",
+  body:    "var(--body)",
+  muted:   "var(--muted)",
 }
 
 type Accent = { color: string; bg: string; border: string }
@@ -50,7 +50,7 @@ function Ordinal({ n }: { n: string }) {
   return (
     <span
       className="absolute top-5 right-6 text-[64px] font-bold leading-none select-none pointer-events-none tabular-nums"
-      style={{ color: "rgba(240,237,232,0.035)", letterSpacing: "-0.04em" }}
+      style={{ color: "var(--ink-subtle)", letterSpacing: "-0.04em" }}
     >
       {n}
     </span>
@@ -80,7 +80,7 @@ function CardInner({ children, accentColor, hovered }: {
     <SpotlightCard
       className="relative rounded-[11px] p-6 md:p-8 h-full flex flex-col overflow-hidden"
       style={{ background: D.surface, border: "none" }}
-      spotlightColor="rgba(240,237,232,0.05)"
+      spotlightColor="var(--ink-faint)"
       spotlightSize={480}
     >
       {/* Top accent line — hover only */}

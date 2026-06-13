@@ -7,8 +7,8 @@ export function FooterWvr() {
     <div
       className="relative border-b"
       style={{
-        background: "#0f0e0c",
-        borderColor: "#2a2825",
+        background: "var(--canvas)",
+        borderColor: "var(--hairline-strong)",
         height: "130px",
       }}
     >

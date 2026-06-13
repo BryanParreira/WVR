@@ -21,9 +21,9 @@ export function OrganizationJsonLd() {
     url: BASE,
     logo: {
       "@type": "ImageObject",
-      url: `${BASE}/logo.png`,
-      width: 200,
-      height: 60,
+      url: `${BASE}/opengraph-image`,
+      width: 1200,
+      height: 630,
     },
     image: `${BASE}/opengraph-image`,
     description:

@@ -147,7 +147,7 @@ export function Hero() {
           <div
             className="beam-border rounded-[10px] w-fit"
             style={{
-              "--bm-bg":  "#26251e",
+              "--bm-bg":  "var(--primary)",
               "--bm-c1":  "rgba(96,165,250,0.03)",
               "--bm-c2":  "rgba(96,165,250,0.55)",
               "--bm-dur": "5s",

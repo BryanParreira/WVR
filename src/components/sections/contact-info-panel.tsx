@@ -8,13 +8,13 @@ import { SpotlightCard } from "@/components/ui/spotlight-card"
 import { SITE_CONFIG } from "@/lib/constants"
 
 const D = {
-  bg:      "#141210",
-  surface: "#1c1a17",
-  border:  "#2a2825",
-  ink:     "#f0ede8",
-  body:    "#a09c92",
-  muted:   "#6b6760",
-  dim:     "#3d3b37",
+  bg:      "var(--surface)",
+  surface: "var(--canvas-soft)",
+  border:  "var(--hairline)",
+  ink:     "var(--ink)",
+  body:    "var(--body)",
+  muted:   "var(--muted)",
+  dim:     "var(--muted-soft)",
 }
 
 const CONTACT_ITEMS = [
@@ -63,7 +63,7 @@ export function ContactInfoPanel() {
       <SpotlightCard
         className="relative rounded-[15px] overflow-hidden h-full"
         style={{ background: D.bg }}
-        spotlightColor="rgba(240,237,232,0.04)"
+        spotlightColor="var(--ink-faint)"
         spotlightSize={500}
       >
         {/* Top accent line — hover only */}
@@ -79,7 +79,7 @@ export function ContactInfoPanel() {
           {CONTACT_ITEMS.map(({ icon: Icon, label, value, href, isLink }) => (
             <div key={label} className="flex items-start gap-3.5">
               <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[7px]"
-                style={{ background: "rgba(240,237,232,0.04)", border: `1px solid ${D.border}` }}>
+                style={{ background: "var(--ink-faint)", border: `1px solid ${D.border}` }}>
                 <Icon className="h-[14px] w-[14px]" style={{ color: D.muted }} strokeWidth={1.75} />
               </div>
               <div>

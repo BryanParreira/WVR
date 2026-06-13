@@ -101,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${jetbrainsMono.variable} ${sourceCodePro.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased bg-canvas text-body">
