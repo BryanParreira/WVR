@@ -3,17 +3,38 @@ import { SiteLayout } from "@/components/layout/site-layout"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { CtaBanner } from "@/components/sections/cta-banner"
 import { AnimateIn } from "@/components/ui/animate-in"
+import { PricingFaqJsonLd } from "@/components/seo/json-ld"
+import { FlipWords } from "@/components/ui/flip-words"
+import { EncryptedText } from "@/components/ui/encrypted-text"
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Pricing — AI, Cybersecurity & Web Development Plans",
   description:
-    "Transparent, project-based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500.",
+    "Transparent, project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500. No hidden fees.",
+  keywords: [
+    "AI agency pricing",
+    "cybersecurity pricing",
+    "web development pricing",
+    "AI automation cost",
+    "GEO pricing",
+    "WebVisionRank pricing",
+  ],
+  alternates: { canonical: "https://webvisionrank.com/pricing" },
+  openGraph: {
+    title: "Pricing — WebVisionRank",
+    description: "Project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500.",
+    url: "https://webvisionrank.com/pricing",
+  },
+  twitter: {
+    title: "Pricing — WebVisionRank",
+    description: "Project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500.",
+  },
 }
 
 const faqs = [
   {
-    q: "Are these one-time project fees or recurring?",
-    a: "Project-based fees. Ongoing support and maintenance can be added as a monthly retainer — pricing depends on scope.",
+    q: "Are these one time project fees or recurring?",
+    a: "Project based fees. Ongoing support and maintenance can be added as a monthly retainer — pricing depends on scope.",
   },
   {
     q: "Can I start with one service and add more later?",
@@ -32,14 +53,18 @@ const faqs = [
 export default function PricingPage() {
   return (
     <SiteLayout>
+      <PricingFaqJsonLd />
       <section className="pt-12 pb-4 px-6 sm:pt-20 bg-canvas">
         <div className="mx-auto max-w-[1200px]">
           <AnimateIn>
-            <p className="caption-uppercase mb-3">Pricing</p>
+            <p className="caption-uppercase mb-3"><EncryptedText text="Pricing" duration={800} /></p>
             <h1 className="display-mega max-w-2xl">
               Invest in growth.
               <br />
-              Not guesswork.
+              <FlipWords
+                words={["Not guesswork.", "Not templates.", "Not mediocrity.", "Without limits."]}
+                duration={3200}
+              />
             </h1>
             <p className="text-[16px] text-body leading-[1.5] mt-6 max-w-lg">
               Every tier is a complete, production-ready solution. No hidden fees, no scope creep.
@@ -54,7 +79,7 @@ export default function PricingPage() {
       <section className="py-12 px-6 sm:py-20 border-t border-hairline bg-canvas">
         <div className="mx-auto max-w-[800px]">
           <AnimateIn className="mb-12">
-            <p className="caption-uppercase mb-3">Common Questions</p>
+            <p className="caption-uppercase mb-3"><EncryptedText text="Common Questions" duration={900} /></p>
             <h2 className="display-md">Frequently asked questions</h2>
           </AnimateIn>
           <div className="divide-y divide-hairline">

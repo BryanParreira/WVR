@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { SITE_CONFIG } from "@/lib/constants"
+import { FooterWvr } from "@/components/layout/footer-wvr"
 
 const footerLinks = {
   Services: [
@@ -56,8 +57,10 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    // Cursor footer spec: canvas bg, body text, 64x48px padding
-    <footer className="border-t border-hairline bg-canvas">
+    <footer className="relative border-t border-hairline bg-canvas overflow-hidden">
+
+      <FooterWvr />
+
       <div className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
 
@@ -70,7 +73,7 @@ export function Footer() {
             </Link>
 
             <p className="text-[14px] text-body leading-[1.5] mb-6 max-w-xs">
-              Hybrid AI tech agency bridging Agentic AI workflows, Zero-Trust cybersecurity,
+              Hybrid AI tech agency bridging Agentic AI workflows, Zero Trust cybersecurity,
               and elite custom development.
             </p>
 

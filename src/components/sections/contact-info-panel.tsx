@@ -21,7 +21,7 @@ const stats = [
 
 const services = [
   "AI & Agentic Automation",
-  "Zero-Trust Security",
+  "Zero Trust Security",
   "Custom Development",
   "GEO + Digital Marketing",
 ]

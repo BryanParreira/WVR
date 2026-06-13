@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { useInView } from "framer-motion"
 import { SITE_CONFIG } from "@/lib/constants"
 
-// Always-dark — terminal stays dark regardless of site theme
 const D = {
   bg:      "#0f0e0c",
   surface: "#1c1a17",
@@ -13,36 +12,84 @@ const D = {
   body:    "#a09c92",
   muted:   "#6b6760",
   dim:     "#3d3b37",
-  primary: "#22b5d4",  // kept only for $ prompt + ✓ symbol
+  green:   "#34d399",
+  primary: "#22b5d4",
 }
 
-type Line = { text: string; color?: string }
-type HistoryEntry = { command: string; lines: Line[] }
-type ActiveOutput = { command: string; lines: Line[]; revealed: number }
+// delay = ms to wait before rendering this line (simulates execution time)
+type Line          = { text: string; color?: string; delay?: number }
+type HistoryEntry  = { command: string; lines: Line[] }
+type ActiveOutput  = { command: string; lines: Line[]; revealed: number }
 
 const WELCOME: Line[] = [
-  { text: `WebVisionRank CLI  ·  v1.0.0`, color: D.ink },
+  { text: "WebVisionRank CLI", color: D.ink },
   { text: "─".repeat(46), color: D.dim },
-  { text: "AI automation · Zero-Trust security · Elite dev" },
+  { text: "AI automation · Zero Trust security · Elite dev" },
   { text: "" },
-  { text: "Type 'help' for available commands.", color: D.muted },
+  { text: "Type 'help' or watch the demo.", color: D.muted },
   { text: "" },
 ]
 
+// ─── run <workflow> outputs ────────────────────────────────────────────────────
+const RUN_WORKFLOWS: Record<string, () => Line[]> = {
+  "crm-automation": () => [
+    { text: "→ CRM-Automation Agent", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0", delay: 80 },
+    { text: "", delay: 60 },
+    { text: "  ✓ fetch_deals()      →  142 records    210ms", color: D.green, delay: 240 },
+    { text: "  ✓ enrich_leads()     →  all enriched   490ms", color: D.green, delay: 510 },
+    { text: "  ✓ score_intent()     →  47 qualified   340ms", color: D.green, delay: 360 },
+    { text: "  ✓ update_crm()       →  synced          89ms", color: D.green, delay: 110 },
+    { text: "", delay: 60 },
+    { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
+    { text: "  ✓ saved 5.8h · cost: $0.43 · labor equiv: $290", color: D.green, delay: 80 },
+  ],
+  "content-pipeline": () => [
+    { text: "→ Content-Pipeline Agent", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o  ·  temp: 0.7", delay: 80 },
+    { text: "", delay: 60 },
+    { text: "  ✓ scrape_trends()    →  28 topics      280ms", color: D.green, delay: 300 },
+    { text: "  ✓ draft_articles()   →  12 drafts      680ms", color: D.green, delay: 700 },
+    { text: "  ✓ seo_optimize()     →  score: 94      420ms", color: D.green, delay: 440 },
+    { text: "  ✓ publish_batch()    →  published      150ms", color: D.green, delay: 170 },
+    { text: "", delay: 60 },
+    { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
+    { text: "  ✓ saved 9.2h · cost: $0.81 · labor equiv: $690", color: D.green, delay: 80 },
+  ],
+  "invoice-processor": () => [
+    { text: "→ Invoice-Processor Agent", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0", delay: 80 },
+    { text: "", delay: 60 },
+    { text: "  ✓ fetch_invoices()   →  89 pending     160ms", color: D.green, delay: 180 },
+    { text: "  ✓ classify_items()   →  categorized    350ms", color: D.green, delay: 370 },
+    { text: "  ✓ extract_data()     →  structured     580ms", color: D.green, delay: 600 },
+    { text: "  ✓ sync_accounting()  →  posted         200ms", color: D.green, delay: 220 },
+    { text: "", delay: 60 },
+    { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
+    { text: "  ✓ saved 7.1h · cost: $0.56 · labor equiv: $520", color: D.green, delay: 80 },
+  ],
+}
+
+// ─── static commands ───────────────────────────────────────────────────────────
 const CMDS: Record<string, () => Line[]> = {
   help: () => [
     { text: "Commands:", color: D.ink },
     { text: "" },
     { text: "  services   what we build" },
     { text: "  ai         AI & automation" },
-    { text: "  security   Zero-Trust architecture" },
+    { text: "  security   Zero Trust architecture" },
     { text: "  dev        custom development" },
     { text: "  geo        marketing & GEO" },
     { text: "  pricing    investment tiers" },
     { text: "  about      who we are" },
     { text: "  contact    get in touch" },
+    { text: "  status     live system status" },
     { text: "" },
-    { text: "  ls  ·  whoami  ·  uptime  ·  clear", color: D.dim },
+    { text: "  run crm-automation      live agent demo", color: D.green },
+    { text: "  run content-pipeline    live agent demo", color: D.green },
+    { text: "  run invoice-processor   live agent demo", color: D.green },
+    { text: "" },
+    { text: "  ls  ·  whoami  ·  uptime  ·  clear  ·  [tab] autocomplete", color: D.dim },
   ],
 
   ls: () => [
@@ -61,17 +108,28 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "3×      avg. traffic growth via GEO" },
   ],
 
+  status: () => [
+    { text: "System Status:", color: D.ink },
+    { text: "" },
+    { text: "  ● agents       3 active", color: D.green },
+    { text: "  ● security     0 threats detected", color: D.green },
+    { text: "  ● uptime       99.9%  ·  all systems operational", color: D.green },
+    { text: "  ● projects     6 in production", color: D.green },
+    { text: "" },
+    { text: "  all systems nominal", color: D.muted },
+  ],
+
   services: () => [
     { text: "Core Disciplines:", color: D.ink },
     { text: "" },
     { text: "  01  AI & Agentic Automation" },
     { text: "      LLM pipelines · multi-agent systems · RAG" },
     { text: "" },
-    { text: "  02  Zero-Trust Security" },
+    { text: "  02  Zero Trust Security" },
     { text: "      Architecture · pen testing · continuous monitoring" },
     { text: "" },
     { text: "  03  Custom Software Development" },
-    { text: "      Full-stack · APIs · DevOps · CI/CD" },
+    { text: "      Full stack · APIs · DevOps · CI/CD" },
     { text: "" },
     { text: "  04  Digital Marketing & GEO" },
     { text: "      SEO · Generative Engine Optimization · analytics" },
@@ -89,15 +147,17 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  · Workflow automation & API chaining" },
     { text: "" },
     { text: "  Result: 40% avg. cost reduction", color: D.ink },
+    { text: "" },
+    { text: "  → try: run crm-automation", color: D.muted },
   ],
 
   security: () => [
-    { text: "Zero-Trust Security", color: D.ink },
+    { text: "Zero Trust Security", color: D.ink },
     { text: "" },
     { text: "  Security from the first line of code." },
     { text: "  Never bolted on — always built in." },
     { text: "" },
-    { text: "  · Zero-Trust architecture design" },
+    { text: "  · Zero Trust architecture design" },
     { text: "  · Penetration testing & red teaming" },
     { text: "  · Continuous vulnerability monitoring" },
     { text: "  · Security audits & compliance" },
@@ -111,7 +171,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  Bespoke apps built to exact specs." },
     { text: "  Internal tooling to customer-facing SaaS." },
     { text: "" },
-    { text: "  · Full-stack web & mobile apps" },
+    { text: "  · Full stack web & mobile apps" },
     { text: "  · API design & microservices" },
     { text: "  · Database architecture & DevOps" },
     { text: "  · CI/CD pipelines" },
@@ -123,10 +183,10 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "Digital Marketing & GEO", color: D.ink },
     { text: "" },
     { text: "  Visible to Google and AI engines alike." },
-    { text: "  GEO-optimized from day one." },
+    { text: "  GEO optimized from day one." },
     { text: "" },
     { text: "  · Generative Engine Optimization (GEO)" },
-    { text: "  · AI-assisted content strategy" },
+    { text: "  · AI assisted content strategy" },
     { text: "  · Conversion rate optimization" },
     { text: "  · Performance analytics & attribution" },
     { text: "" },
@@ -152,7 +212,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "WebVisionRank", color: D.ink },
     { text: "" },
     { text: "  A hybrid AI tech agency at the intersection of Agentic AI," },
-    { text: "  Zero-Trust cybersecurity, and elite software engineering." },
+    { text: "  Zero Trust cybersecurity, and elite software engineering." },
     { text: "" },
     { text: "  Most agencies are too broad to be excellent," },
     { text: "  or too narrow to be strategic. We're the exception." },
@@ -171,20 +231,41 @@ const CMDS: Record<string, () => Line[]> = {
   ],
 }
 
-export function AgentCard() {
-  const wrapRef   = useRef<HTMLDivElement>(null)
-  const bodyRef   = useRef<HTMLDivElement>(null)
-  const inputRef  = useRef<HTMLInputElement>(null)
-  const isInView  = useInView(wrapRef, { once: true, margin: "-60px" })
+const TAB_COMPLETIONS = [
+  ...Object.keys(CMDS),
+  "run crm-automation",
+  "run content-pipeline",
+  "run invoice-processor",
+]
 
-  const [history,   setHistory]   = useState<HistoryEntry[]>([])
-  const [active,    setActive]    = useState<ActiveOutput | null>(null)
-  const [input,     setInput]     = useState("")
-  const [cmdHist,   setCmdHist]   = useState<string[]>([])
-  const [histIdx,   setHistIdx]   = useState(-1)
-  const [focused,   setFocused]   = useState(false)
-  const [cursorOn,  setCursorOn]  = useState(true)
-  const [ready,     setReady]     = useState(false)
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function AgentCard() {
+  const wrapRef  = useRef<HTMLDivElement>(null)
+  const bodyRef  = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const isInView = useInView(wrapRef, { once: true, margin: "-60px" })
+
+  const [history,  setHistory]  = useState<HistoryEntry[]>([])
+  const [active,   setActive]   = useState<ActiveOutput | null>(null)
+  const [input,    setInput]    = useState("")
+  const [cmdHist,  setCmdHist]  = useState<string[]>([])
+  const [histIdx,  setHistIdx]  = useState(-1)
+  const [focused,  setFocused]  = useState(false)
+  const [cursorOn, setCursorOn] = useState(true)
+  const [ready,    setReady]    = useState(false)
+
+  // Auto-demo state (refs to avoid stale closures)
+  const userInteractedRef = useRef(false)
+  const autoIdsRef        = useRef<ReturnType<typeof setTimeout>[]>([])
+  const autoPhaseRef      = useRef(0) // 0=init · 1=pending-services · 2=pending-run · 3=done
+
+  const cancelAuto = useCallback(() => {
+    userInteractedRef.current = true
+    autoIdsRef.current.forEach(clearTimeout)
+    autoIdsRef.current = []
+    setInput("")
+  }, [])
 
   // Cursor blink
   useEffect(() => {
@@ -192,14 +273,14 @@ export function AgentCard() {
     return () => clearInterval(id)
   }, [])
 
-  // Welcome message on first viewport entry
+  // Welcome on viewport entry
   useEffect(() => {
     if (!isInView || ready) return
     setReady(true)
     setActive({ command: "", lines: WELCOME, revealed: 0 })
   }, [isInView, ready])
 
-  // Animate output lines one at a time
+  // Line animation — respects per-line delay
   useEffect(() => {
     if (!active) return
     if (active.revealed >= active.lines.length) {
@@ -207,30 +288,53 @@ export function AgentCard() {
       setActive(null)
       return
     }
+    const lineDelay = active.lines[active.revealed]?.delay ?? 38
     const t = setTimeout(
       () => setActive(a => a ? { ...a, revealed: a.revealed + 1 } : null),
-      38,
+      lineDelay,
     )
     return () => clearTimeout(t)
   }, [active])
 
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
-    if (bodyRef.current) {
-      bodyRef.current.scrollTop = bodyRef.current.scrollHeight
-    }
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight
   }, [history, active])
 
+  // ─── Command runner ──────────────────────────────────────────────────────────
   const run = useCallback((cmd: string) => {
     const t = cmd.trim().toLowerCase()
     if (!t) return
+
     if (t === "clear") {
       setHistory([])
       setActive(null)
+      cancelAuto()
+      autoPhaseRef.current = 3
       return
     }
-    const fn = CMDS[t]
-    const lines: Line[] = fn
+
+    if (t.startsWith("run ")) {
+      const wf    = t.slice(4).trim()
+      const wfFn  = RUN_WORKFLOWS[wf]
+      const lines = wfFn
+        ? wfFn()
+        : [
+            { text: `unknown workflow: ${wf}`, color: D.muted },
+            { text: "" },
+            { text: "  available:", color: D.ink },
+            { text: "  run crm-automation" },
+            { text: "  run content-pipeline" },
+            { text: "  run invoice-processor" },
+          ]
+      setActive({ command: t, lines, revealed: 0 })
+      setCmdHist(h => [t, ...h.slice(0, 49)])
+      setHistIdx(-1)
+      return
+    }
+
+    const fn    = CMDS[t]
+    const lines = fn
       ? fn()
       : [
           { text: `command not found: ${t}`, color: D.muted },
@@ -239,10 +343,58 @@ export function AgentCard() {
     setActive({ command: t, lines, revealed: 0 })
     setCmdHist(h => [t, ...h.slice(0, 49)])
     setHistIdx(-1)
-  }, [])
+  }, [cancelAuto])
 
+  // ─── Auto-demo typer ─────────────────────────────────────────────────────────
+  const autoType = useCallback((cmd: string) => {
+    if (userInteractedRef.current) return
+    let i = 0
+    const type = () => {
+      if (userInteractedRef.current) return
+      i++
+      setInput(cmd.slice(0, i))
+      if (i < cmd.length) {
+        autoIdsRef.current.push(setTimeout(type, 72 + Math.random() * 48))
+      } else {
+        autoIdsRef.current.push(setTimeout(() => {
+          if (userInteractedRef.current) return
+          setInput("")
+          run(cmd)
+        }, 380))
+      }
+    }
+    autoIdsRef.current.push(setTimeout(type, 60))
+  }, [run])
+
+  // Phase advancement — fires when active output finishes (active becomes null)
+  useEffect(() => {
+    if (active !== null || !ready || userInteractedRef.current) return
+
+    if (autoPhaseRef.current === 0 && history.length === 1 && history[0].command === "") {
+      // Welcome done → type "services" after 2.5s
+      autoPhaseRef.current = 1
+      autoIdsRef.current.push(setTimeout(() => {
+        if (!userInteractedRef.current) autoType("services")
+      }, 2500))
+    } else if (
+      autoPhaseRef.current === 1 &&
+      history.length >= 2 &&
+      history[history.length - 1].command === "services"
+    ) {
+      // services done → type "run crm-automation" after 2s
+      autoPhaseRef.current = 2
+      autoIdsRef.current.push(setTimeout(() => {
+        if (!userInteractedRef.current) autoType("run crm-automation")
+      }, 2000))
+    } else if (autoPhaseRef.current === 2 && history.length >= 3) {
+      autoPhaseRef.current = 3 // done
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, history, ready])
+
+  // ─── Input handlers ──────────────────────────────────────────────────────────
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Any key during animation skips to completion
+    // Any key skips current animation
     if (active) {
       e.preventDefault()
       setActive(a => a ? { ...a, revealed: a.lines.length } : null)
@@ -252,6 +404,12 @@ export function AgentCard() {
       e.preventDefault()
       run(input)
       setInput("")
+    } else if (e.key === "Tab") {
+      e.preventDefault()
+      const val = input.trim().toLowerCase()
+      if (!val) return
+      const match = TAB_COMPLETIONS.find(c => c.startsWith(val))
+      if (match) setInput(match)
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
       const idx = Math.min(histIdx + 1, cmdHist.length - 1)
@@ -276,33 +434,36 @@ export function AgentCard() {
     setInput(e.target.value)
   }, [active])
 
+  const handleFocus = useCallback(() => {
+    setFocused(true)
+    cancelAuto()
+  }, [cancelAuto])
+
   const focusInput = useCallback(() => inputRef.current?.focus(), [])
 
+  // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <div
       ref={wrapRef}
       className="w-full overflow-hidden rounded-[12px] cursor-text relative"
       style={{
         background: D.bg,
-        border:     `1px solid ${focused ? "#3a3835" : D.border}`,
-        boxShadow:  "0 24px 64px rgba(0,0,0,0.35)",
+        border:    `1px solid ${focused ? "#3a3835" : D.border}`,
+        boxShadow: "0 24px 64px rgba(0,0,0,0.35)",
       }}
       onClick={focusInput}
     >
-      {/* Hidden input — keyboard capture for both desktop and mobile */}
+      {/* Hidden keyboard capture */}
       <input
         ref={inputRef}
         value={input}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        onFocus={() => setFocused(true)}
+        onFocus={handleFocus}
         onBlur={() => setFocused(false)}
         style={{ position: "absolute", opacity: 0, width: 1, height: 1, top: 0, left: 0, padding: 0, border: "none" }}
-        aria-label="Terminal input — type commands to explore WebVisionRank"
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
+        aria-label="Terminal — type commands to explore WebVisionRank"
+        autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
       />
 
       {/* Title bar */}
@@ -316,26 +477,24 @@ export function AgentCard() {
           <div className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
         </div>
         <span className="text-[12px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
-          wvr — WebVisionRank CLI
+          wvr-cli — bash
         </span>
         <div className="flex items-center gap-1.5">
-          <span
-            className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
-            style={{ background: focused ? "#5a5852" : D.dim }}
-          />
+          <span className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
+            style={{ background: focused ? "#5a5852" : D.dim }} />
           <span className="text-[11px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
             {focused ? "active" : "click to type"}
           </span>
         </div>
       </div>
 
-      {/* Terminal body — scrollable output */}
+      {/* Terminal body */}
       <div
         ref={bodyRef}
         className="h-[370px] overflow-y-auto p-5"
         style={{ fontFamily: "var(--font-mono)", background: D.bg }}
       >
-        {/* History entries */}
+        {/* History */}
         {history.map((entry, i) => (
           <div key={i} className="mb-4">
             {entry.command && (
@@ -346,18 +505,14 @@ export function AgentCard() {
               </div>
             )}
             {entry.lines.map((line, j) => (
-              <div
-                key={j}
-                className="text-[13px] leading-[1.65]"
-                style={{ color: line.color ?? D.body }}
-              >
-                {line.text || " "}
+              <div key={j} className="text-[13px] leading-[1.65]" style={{ color: line.color ?? D.body }}>
+                {line.text || " "}
               </div>
             ))}
           </div>
         ))}
 
-        {/* Currently animating output */}
+        {/* Animating output */}
         {active && (
           <div className="mb-4">
             {active.command && (
@@ -368,12 +523,8 @@ export function AgentCard() {
               </div>
             )}
             {active.lines.slice(0, active.revealed).map((line, j) => (
-              <div
-                key={j}
-                className="text-[13px] leading-[1.65]"
-                style={{ color: line.color ?? D.body }}
-              >
-                {line.text || " "}
+              <div key={j} className="text-[13px] leading-[1.65]" style={{ color: line.color ?? D.body }}>
+                {line.text || " "}
               </div>
             ))}
           </div>
@@ -386,18 +537,12 @@ export function AgentCard() {
             <span style={{ color: D.primary, marginRight: 6 }}>$</span>
             <span style={{ color: D.body }}>
               {input}
-              <span
-                style={{
-                  display:       "inline-block",
-                  verticalAlign: "middle",
-                  width:         7,
-                  height:        14,
-                  marginLeft:    1,
-                  background:    focused && cursorOn ? D.body : "transparent",
-                  borderRadius:  1,
-                  flexShrink:    0,
-                }}
-              />
+              <span style={{
+                display: "inline-block", verticalAlign: "middle",
+                width: 7, height: 14, marginLeft: 1,
+                background: focused && cursorOn ? D.body : "transparent",
+                borderRadius: 1, flexShrink: 0,
+              }} />
             </span>
           </div>
         )}
@@ -409,11 +554,17 @@ export function AgentCard() {
         style={{ background: D.surface, borderTop: `1px solid ${D.border}` }}
       >
         <span className="text-[11px]" style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
-          WVR CLI v1.0.0
+          WVR CLI v1.0
         </span>
         <span className="text-[11px]" style={{ color: D.muted, fontFamily: "var(--font-mono)" }}>
-          <span className="hidden sm:inline">{focused ? "↑↓ history · enter to run · ctrl+c to cancel" : "click to explore"}</span>
-          <span className="sm:hidden">{focused ? "↑↓ · enter · ctrl+c" : "tap to type"}</span>
+          <span className="hidden sm:inline">
+            {focused
+              ? "↑↓ history · [tab] complete · enter · ctrl+c"
+              : "click to type · [tab] autocomplete"}
+          </span>
+          <span className="sm:hidden">
+            {focused ? "↑↓ · tab · enter · ctrl+c" : "tap to type"}
+          </span>
         </span>
       </div>
     </div>

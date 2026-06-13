@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
         "cybersecurity":    "Proactive Cybersecurity",
         "digital-marketing":"Digital Marketing & GEO",
         "custom-software":  "Custom Software Development",
-        "web-development":  "High-Performance Web Dev",
+        "web-development":  "High Performance Web Dev",
         "data-intelligence":"Data Intelligence",
         "other":            "Other / Not Sure Yet",
       }

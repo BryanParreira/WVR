@@ -25,6 +25,7 @@ export interface Testimonial {
   content: string
   avatar?: string
   rating: number
+  result?: string
 }
 
 export interface NavItem {

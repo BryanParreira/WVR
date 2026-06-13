@@ -17,7 +17,7 @@ export const SERVICES: Service[] = [
     icon: "Bot",
     features: [
       "Custom LLM pipeline development",
-      "Multi-agent orchestration systems",
+      "Multi agent orchestration systems",
       "RAG knowledge base integrations",
       "Workflow automation & API chaining",
     ],
@@ -27,10 +27,10 @@ export const SERVICES: Service[] = [
     id: "cybersecurity",
     title: "Proactive Cybersecurity",
     description:
-      "Zero-Trust architecture, continuous threat monitoring, and incident response. We build defenses before attackers build exploits.",
+      "Zero Trust architecture, continuous threat monitoring, and incident response. We build defenses before attackers build exploits.",
     icon: "Shield",
     features: [
-      "Zero-Trust architecture design",
+      "Zero Trust architecture design",
       "Penetration testing & red teaming",
       "Continuous vulnerability monitoring",
       "Security audits & compliance",
@@ -41,11 +41,11 @@ export const SERVICES: Service[] = [
     id: "digital-marketing",
     title: "Digital Marketing & GEO",
     description:
-      "AI-powered SEO, Generative Engine Optimization, and data-driven campaigns that put you in front of both humans and AI search.",
+      "AI powered SEO, Generative Engine Optimization, and data driven campaigns that put you in front of both humans and AI search.",
     icon: "TrendingUp",
     features: [
       "Generative Engine Optimization (GEO)",
-      "AI-assisted content strategy",
+      "AI assisted content strategy",
       "Conversion rate optimization",
       "Performance analytics & attribution",
     ],
@@ -58,7 +58,7 @@ export const SERVICES: Service[] = [
       "Bespoke applications built to exact specifications — from internal tooling to customer-facing SaaS products.",
     icon: "Code2",
     features: [
-      "Full-stack web & mobile apps",
+      "Full stack web & mobile apps",
       "API design & microservices",
       "Database architecture",
       "DevOps & CI/CD pipelines",
@@ -67,7 +67,7 @@ export const SERVICES: Service[] = [
   },
   {
     id: "web-development",
-    title: "High-Performance Web Dev",
+    title: "High Performance Web Dev",
     description:
       "Sub-second load times, perfect Lighthouse scores, and conversion-optimized interfaces that turn visitors into clients.",
     icon: "Zap",
@@ -103,7 +103,7 @@ export const PRICING_TIERS: PricingTier[] = [
     description:
       "Essential digital infrastructure for businesses ready to compete online with speed and security.",
     features: [
-      "High-performance website (up to 10 pages)",
+      "High performance website (up to 10 pages)",
       "Basic SEO & GEO optimization",
       "Security hardening & SSL",
       "Contact form with spam protection",
@@ -117,7 +117,7 @@ export const PRICING_TIERS: PricingTier[] = [
     name: "Growth",
     price: 2500,
     description:
-      "AI-powered marketing and automation for businesses scaling their digital presence and operations.",
+      "AI powered marketing and automation for businesses scaling their digital presence and operations.",
     features: [
       "Everything in Foundation",
       "AI content automation pipeline",
@@ -135,11 +135,11 @@ export const PRICING_TIERS: PricingTier[] = [
     name: "Ecosystem",
     price: "5,000+",
     description:
-      "Full-stack digital transformation — custom AI agents, Zero-Trust security, and bespoke software.",
+      "Full stack digital transformation — custom AI agents, Zero Trust security, and bespoke software.",
     features: [
       "Everything in Growth",
       "Custom AI agent development",
-      "Zero-Trust security architecture",
+      "Zero Trust security architecture",
       "Bespoke software/SaaS build",
       "Dedicated Slack channel",
       "Quarterly security audits",
@@ -158,6 +158,7 @@ export const TESTIMONIALS: Testimonial[] = [
     content:
       "WebVisionRank's AI automation cut our operational overhead by 40% in three months. The multi-agent system they built handles tasks we thought required three full-time hires.",
     rating: 5,
+    result: "↓ 40% operational cost",
   },
   {
     id: "2",
@@ -165,8 +166,9 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "CTO",
     company: "FinCore Solutions",
     content:
-      "Their Zero-Trust security audit uncovered vulnerabilities our previous provider missed entirely. The team's depth of knowledge in both AI and cybersecurity is genuinely rare.",
+      "Their Zero Trust security audit uncovered vulnerabilities our previous provider missed entirely. The team's depth of knowledge in both AI and cybersecurity is genuinely rare.",
     rating: 5,
+    result: "✓ 0 breaches in production",
   },
   {
     id: "3",
@@ -176,6 +178,7 @@ export const TESTIMONIALS: Testimonial[] = [
     content:
       "Our organic traffic tripled in six months after the GEO strategy. They understand how LLMs surface content — not just Google. Ahead of the curve.",
     rating: 5,
+    result: "↑ 3× organic traffic",
   },
 ]
 
@@ -208,7 +211,7 @@ export const PROCESS_STEPS = [
 
 export const SITE_CONFIG = {
   name: "WebVisionRank",
-  tagline: "AI-Powered. Security-First. Elite Engineering.",
+  tagline: "AI Powered. Security First. Elite Engineering.",
   description:
     "Hybrid AI tech agency bridging Agentic AI workflows, Proactive Cybersecurity, and Elite Custom Development.",
   url: "https://webvisionrank.com",

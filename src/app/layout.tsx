@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono, Source_Code_Pro } from "next/font/google"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld"
+import { ScrollProgressBar } from "@/components/ui/scroll-progress"
 import { SITE_CONFIG } from "@/lib/constants"
 import "./globals.css"
 
@@ -34,30 +36,44 @@ export const metadata: Metadata = {
   description: SITE_CONFIG.description,
   keywords: [
     "AI agency",
-    "cybersecurity",
     "agentic AI",
-    "Zero-Trust security",
-    "web development",
-    "digital marketing",
-    "GEO",
+    "AI automation agency",
+    "cybersecurity agency",
+    "Zero Trust security",
     "generative engine optimization",
+    "GEO agency",
+    "web development agency",
+    "digital marketing agency",
+    "custom software development",
+    "LLM pipeline development",
+    "AI agents for business",
+    "WebVisionRank",
   ],
   authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
   creator: SITE_CONFIG.name,
+  alternates: {
+    canonical: SITE_CONFIG.url,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: SITE_CONFIG.url,
-    title: SITE_CONFIG.name,
+    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
     siteName: SITE_CONFIG.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_CONFIG.name,
+    site: "@webvisionrank",
+    creator: "@webvisionrank",
+    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
   },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 },
+  },
 }
 
 export const viewport: Viewport = {
@@ -73,6 +89,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${jetbrainsMono.variable} ${sourceCodePro.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased bg-canvas text-body">
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
+        <ScrollProgressBar />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

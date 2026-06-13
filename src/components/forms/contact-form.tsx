@@ -19,7 +19,7 @@ const serviceOptions = [
   { value: "cybersecurity",    label: "Proactive Cybersecurity" },
   { value: "digital-marketing",label: "Digital Marketing & GEO" },
   { value: "custom-software",  label: "Custom Software Development" },
-  { value: "web-development",  label: "High-Performance Web Dev" },
+  { value: "web-development",  label: "High Performance Web Dev" },
   { value: "data-intelligence",label: "Data Intelligence" },
   { value: "other",            label: "Other / Not Sure Yet" },
 ]

@@ -18,46 +18,25 @@ export function AnimateIn({
   children,
   className,
   delay = 0,
-  duration = 0.6,
+  duration = 0.65,
   direction = "up",
-  distance = 24,
+  distance = 28,
   once = true,
 }: AnimateInProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once, margin: "-80px" })
 
+  const yIn  = direction === "up" ? distance : direction === "down" ? -distance : 0
+  const xIn  = direction === "left" ? distance : direction === "right" ? -distance : 0
+
   return (
     <motion.div
       ref={ref}
-      initial={{
-        opacity: 0,
-        y: direction === "up" ? distance : direction === "down" ? -distance : 0,
-        x: direction === "left" ? distance : direction === "right" ? -distance : 0,
-      }}
-      animate={
-        isInView
-          ? { opacity: 1, y: 0, x: 0 }
-          : {
-              opacity: 0,
-              y:
-                direction === "up"
-                  ? distance
-                  : direction === "down"
-                  ? -distance
-                  : 0,
-              x:
-                direction === "left"
-                  ? distance
-                  : direction === "right"
-                  ? -distance
-                  : 0,
-            }
-      }
-      transition={{
-        duration,
-        delay,
-        ease: [0.21, 1.11, 0.81, 0.99],
-      }}
+      initial={{ opacity: 0, y: yIn, x: xIn, filter: "blur(6px)", scale: 0.98 }}
+      animate={isInView
+        ? { opacity: 1, y: 0, x: 0, filter: "blur(0px)", scale: 1 }
+        : { opacity: 0, y: yIn, x: xIn, filter: "blur(6px)", scale: 0.98 }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={cn(className)}
     >
       {children}
@@ -75,7 +54,7 @@ interface StaggerContainerProps {
 export function StaggerContainer({
   children,
   className,
-  staggerDelay = 0.1,
+  staggerDelay = 0.12,
   containerDelay = 0,
 }: StaggerContainerProps) {
   const ref = useRef(null)
@@ -88,10 +67,7 @@ export function StaggerContainer({
       animate={isInView ? "visible" : "hidden"}
       variants={{
         visible: {
-          transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: containerDelay,
-          },
+          transition: { staggerChildren: staggerDelay, delayChildren: containerDelay },
         },
         hidden: {},
       }}
@@ -112,11 +88,10 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.5, ease: [0.21, 1.11, 0.81, 0.99] },
+        hidden:   { opacity: 0, y: 24, filter: "blur(8px)", scale: 0.97 },
+        visible:  {
+          opacity: 1, y: 0, filter: "blur(0px)", scale: 1,
+          transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
         },
       }}
       className={cn(className)}

@@ -11,10 +11,10 @@ const buttonVariants = cva(
       variant: {
         // Primary CTA — Cursor Orange analog: WVR deep cyan. Used scarcely.
         primary:
-          "bg-primary text-on-primary hover:bg-primary-active rounded-[8px]",
+          "bg-primary text-on-primary hover:bg-primary-active rounded-[8px] btn-shimmer",
         // Download/hero CTA — pill shape signals primary importance (Supabase convention)
         ink:
-          "bg-ink text-canvas hover:bg-[#3d3b30] rounded-full",
+          "bg-ink text-canvas hover:bg-[#3d3b30] rounded-full btn-shimmer",
         // Secondary — shadow-as-border (Vercel technique)
         secondary:
           "bg-surface text-ink [box-shadow:var(--shadow-border)] hover:bg-canvas-soft rounded-[8px]",

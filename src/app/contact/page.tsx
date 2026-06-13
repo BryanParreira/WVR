@@ -5,8 +5,24 @@ import { AnimateIn } from "@/components/ui/animate-in"
 import { ContactInfoPanel } from "@/components/sections/contact-info-panel"
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Start your project with WebVisionRank. Response within 24 hours.",
+  title: "Contact — Start Your Project",
+  description: "Start your AI, cybersecurity, or web development project with WebVisionRank. Response within 24 hours.",
+  keywords: [
+    "contact WebVisionRank",
+    "hire AI agency",
+    "start AI automation project",
+    "cybersecurity consultation",
+  ],
+  alternates: { canonical: "https://webvisionrank.com/contact" },
+  openGraph: {
+    title: "Contact WebVisionRank — Start Your Project",
+    description: "Start your AI, cybersecurity, or web development project. Response within 24 hours.",
+    url: "https://webvisionrank.com/contact",
+  },
+  twitter: {
+    title: "Contact WebVisionRank — Start Your Project",
+    description: "Start your AI, cybersecurity, or web development project. Response within 24 hours.",
+  },
 }
 
 export default function ContactPage() {
