@@ -49,12 +49,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Invalid request body." }, { status: 400 })
   }
 
-  // 3. Verify hCaptcha token
-  const captchaToken = typeof body.captchaToken === "string" ? body.captchaToken : ""
-  if (!captchaToken) {
-    return NextResponse.json({ message: "Captcha verification required." }, { status: 400 })
-  }
+  // 3. Verify hCaptcha token (only when secret key is configured)
   if (process.env.HCAPTCHA_SECRET_KEY) {
+    const captchaToken = typeof body.captchaToken === "string" ? body.captchaToken : ""
+    if (!captchaToken) {
+      return NextResponse.json({ message: "Captcha verification required." }, { status: 400 })
+    }
     try {
       const verifyRes = await fetch("https://hcaptcha.com/siteverify", {
         method: "POST",

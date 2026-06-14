@@ -64,6 +64,8 @@ const fieldStyle = {
   color:       D.ink,
 }
 
+const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ""
+
 export function ContactForm() {
   const [formState,    setFormState]    = useState<FormState>("idle")
   const [errorMessage, setErrorMessage] = useState("")
@@ -83,7 +85,7 @@ export function ContactForm() {
   })
 
   async function onSubmit(data: ContactFormData) {
-    if (!captchaToken) {
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
       setErrorMessage("Please complete the captcha before submitting.")
       setFormState("error")
       return
@@ -280,16 +282,18 @@ export function ContactForm() {
         </div>
       )}
 
-      {/* Captcha */}
-      <div>
-        <HCaptcha
-          ref={captchaRef}
-          sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
-          theme="dark"
-          onVerify={(token) => setCaptchaToken(token)}
-          onExpire={() => setCaptchaToken(null)}
-        />
-      </div>
+      {/* Captcha — only renders when site key is configured */}
+      {HCAPTCHA_SITE_KEY && (
+        <div>
+          <HCaptcha
+            ref={captchaRef}
+            sitekey={HCAPTCHA_SITE_KEY}
+            theme="dark"
+            onVerify={(token) => setCaptchaToken(token)}
+            onExpire={() => setCaptchaToken(null)}
+          />
+        </div>
+      )}
 
       {/* Submit */}
       <button
