@@ -216,6 +216,7 @@ export async function POST(req: NextRequest) {
 
     // Try n8n webhook first
     if (process.env.N8N_WEBHOOK_URL) {
+      console.log("[contact] firing n8n webhook...")
       try {
         const res = await fetch(process.env.N8N_WEBHOOK_URL, {
           method: "POST",
@@ -230,7 +231,11 @@ export async function POST(req: NextRequest) {
             submitted_at: new Date().toISOString(),
           }),
         })
-        if (!res.ok) console.error("[contact] n8n webhook error:", res.status)
+        console.log("[contact] n8n response status:", res.status)
+        if (!res.ok) {
+          const body = await res.text()
+          console.error("[contact] n8n webhook error:", res.status, body)
+        }
       } catch (err) {
         console.error("[contact] n8n webhook failed:", err)
       }
