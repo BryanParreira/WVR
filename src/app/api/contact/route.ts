@@ -214,8 +214,27 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`
 
-    // Try Web3Forms first (simplest — just one API key)
-    if (process.env.WEB3FORMS_ACCESS_KEY) {
+    // Try n8n webhook first
+    if (process.env.N8N_WEBHOOK_URL) {
+      try {
+        const res = await fetch(process.env.N8N_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            email,
+            company: company ?? null,
+            service: serviceLabel[service] ?? service,
+            message,
+            subject,
+            submitted_at: new Date().toISOString(),
+          }),
+        })
+        if (!res.ok) console.error("[contact] n8n webhook error:", res.status)
+      } catch (err) {
+        console.error("[contact] n8n webhook failed:", err)
+      }
+    } else if (process.env.WEB3FORMS_ACCESS_KEY) {
       try {
         const res = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
@@ -224,11 +243,13 @@ export async function POST(req: NextRequest) {
             access_key: process.env.WEB3FORMS_ACCESS_KEY,
             subject,
             from_name: name,
+            email,
             replyto: email,
             message: textBody,
           }),
         })
-        if (!res.ok) throw new Error(`Web3Forms responded ${res.status}`)
+        const data = await res.json() as { success: boolean; message?: string }
+        if (!data.success) console.error("[contact] Web3Forms error:", data.message)
       } catch (err) {
         console.error("[contact] Web3Forms failed:", err)
       }
