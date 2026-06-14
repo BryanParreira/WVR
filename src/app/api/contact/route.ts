@@ -130,23 +130,29 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 7. Send email notification via Resend (if configured)
-  if (process.env.RESEND_API_KEY && process.env.CONTACT_EMAIL_TO) {
-    try {
-      const { Resend } = await import("resend")
-      const resend = new Resend(process.env.RESEND_API_KEY)
+  // 7. Send email notification
+  if (process.env.CONTACT_EMAIL_TO) {
+    const serviceLabel: Record<string, string> = {
+      "ai-automation":    "AI & Agentic Automation",
+      "cybersecurity":    "Proactive Cybersecurity",
+      "digital-marketing":"Digital Marketing & GEO",
+      "custom-software":  "Custom Software Development",
+      "web-development":  "High Performance Web Dev",
+      "data-intelligence":"Data Intelligence",
+      "other":            "Other / Not Sure Yet",
+    }
 
-      const serviceLabel: Record<string, string> = {
-        "ai-automation":    "AI & Agentic Automation",
-        "cybersecurity":    "Proactive Cybersecurity",
-        "digital-marketing":"Digital Marketing & GEO",
-        "custom-software":  "Custom Software Development",
-        "web-development":  "High Performance Web Dev",
-        "data-intelligence":"Data Intelligence",
-        "other":            "Other / Not Sure Yet",
-      }
+    const subject = `New inquiry: ${serviceLabel[service] ?? service} — ${name.replace(/[\r\n]/g, " ")}`
+    const textBody = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Company: ${company ?? "Not provided"}`,
+      `Service: ${serviceLabel[service] ?? service}`,
+      `\nMessage:\n${message}`,
+      `\nSubmitted: ${new Date().toUTCString()}`,
+    ].join("\n")
 
-      const html = `<!DOCTYPE html>
+    const htmlBody = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -157,57 +163,38 @@ export async function POST(req: NextRequest) {
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f7f4;padding:40px 20px;">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-
-        <!-- Header -->
         <tr>
           <td style="background:#141210;border-radius:12px 12px 0 0;padding:32px 40px;">
             <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6b6760;font-family:'Courier New',monospace;">WebVisionRank</p>
             <h1 style="margin:0;font-size:22px;font-weight:600;color:#f0ede8;letter-spacing:-0.015em;">New project inquiry</h1>
           </td>
         </tr>
-
-        <!-- Body -->
         <tr>
           <td style="background:#ffffff;padding:0 40px 8px;">
-
-            <!-- Client fields -->
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;">
-              <tr>
-                <td style="padding-bottom:20px;border-bottom:1px solid #ebebeb;">
-                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Name</p>
-                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${sName}</p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
-                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Email</p>
-                  <a href="mailto:${sEmail}" style="margin:0;font-size:15px;color:#0891b2;font-weight:500;text-decoration:none;">${sEmail}</a>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
-                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Company</p>
-                  <p style="margin:0;font-size:15px;color:#111827;">${sCompany}</p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
-                  <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Service of interest</p>
-                  <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${h(serviceLabel[service] ?? service)}</p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px 0 32px;">
-                  <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Project details</p>
-                  <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;white-space:pre-wrap;">${sMessage}</p>
-                </td>
-              </tr>
+              <tr><td style="padding-bottom:20px;border-bottom:1px solid #ebebeb;">
+                <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Name</p>
+                <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${sName}</p>
+              </td></tr>
+              <tr><td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Email</p>
+                <a href="mailto:${sEmail}" style="margin:0;font-size:15px;color:#0891b2;font-weight:500;text-decoration:none;">${sEmail}</a>
+              </td></tr>
+              <tr><td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Company</p>
+                <p style="margin:0;font-size:15px;color:#111827;">${sCompany}</p>
+              </td></tr>
+              <tr><td style="padding:20px 0;border-bottom:1px solid #ebebeb;">
+                <p style="margin:0 0 3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Service of interest</p>
+                <p style="margin:0;font-size:15px;color:#111827;font-weight:500;">${h(serviceLabel[service] ?? service)}</p>
+              </td></tr>
+              <tr><td style="padding:20px 0 32px;">
+                <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af;font-family:'Courier New',monospace;">Project details</p>
+                <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;white-space:pre-wrap;">${sMessage}</p>
+              </td></tr>
             </table>
-
           </td>
         </tr>
-
-        <!-- Reply CTA -->
         <tr>
           <td style="background:#ffffff;padding:0 40px 32px;">
             <a href="mailto:${sEmail}?subject=Re: Your inquiry — WebVisionRank"
@@ -216,38 +203,71 @@ export async function POST(req: NextRequest) {
             </a>
           </td>
         </tr>
-
-        <!-- Footer -->
         <tr>
           <td style="background:#f7f7f4;border-radius:0 0 12px 12px;padding:20px 40px;border-top:1px solid #e5e5e0;">
             <p style="margin:0;font-size:12px;color:#9ca3af;">Submitted via webvisionrank.com/contact · ${new Date().toUTCString()}</p>
           </td>
         </tr>
-
       </table>
     </td></tr>
   </table>
 </body>
 </html>`
 
-      await resend.emails.send({
-        from: "WebVisionRank <noreply@webvisionrank.com>",
-        to: process.env.CONTACT_EMAIL_TO,
-        replyTo: email,
-        subject: `New inquiry: ${serviceLabel[service] ?? service} — ${name.replace(/[\r\n]/g, " ")}`,
-        html,
-        text: [
-          `Name: ${name}`,
-          `Email: ${email}`,
-          `Company: ${company ?? "Not provided"}`,
-          `Service: ${serviceLabel[service] ?? service}`,
-          `\nMessage:\n${message}`,
-          `\nSubmitted: ${new Date().toUTCString()}`,
-        ].join("\n"),
-      })
-    } catch (err) {
-      console.error("[contact] Resend email failed:", err)
-      // Non-fatal
+    // Try Web3Forms first (simplest — just one API key)
+    if (process.env.WEB3FORMS_ACCESS_KEY) {
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: process.env.WEB3FORMS_ACCESS_KEY,
+            subject,
+            from_name: name,
+            replyto: email,
+            message: textBody,
+          }),
+        })
+        if (!res.ok) throw new Error(`Web3Forms responded ${res.status}`)
+      } catch (err) {
+        console.error("[contact] Web3Forms failed:", err)
+      }
+    } else if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("REPLACE")) {
+      try {
+        const { Resend } = await import("resend")
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        await resend.emails.send({
+          from: "WebVisionRank <noreply@webvisionrank.com>",
+          to: process.env.CONTACT_EMAIL_TO,
+          replyTo: email,
+          subject,
+          html: htmlBody,
+          text: textBody,
+        })
+      } catch (err) {
+        console.error("[contact] Resend failed:", err)
+      }
+    } else if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      try {
+        const nodemailer = await import("nodemailer")
+        const transporter = nodemailer.default.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+          },
+        })
+        await transporter.sendMail({
+          from: `"WebVisionRank" <${process.env.GMAIL_USER}>`,
+          to: process.env.CONTACT_EMAIL_TO,
+          replyTo: email,
+          subject,
+          html: htmlBody,
+          text: textBody,
+        })
+      } catch (err) {
+        console.error("[contact] Nodemailer failed:", err)
+      }
     }
   }
 
