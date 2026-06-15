@@ -105,7 +105,7 @@ export function CtaBanner() {
               <FlipWords
                 words={["extraordinary?", "unstoppable?", "future-proof?", "world-class?"]}
                 duration={3500}
-                className="text-canvas"
+                className="text-[#f0ede8]"
               />
             </h2>
 

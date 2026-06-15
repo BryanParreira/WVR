@@ -69,7 +69,7 @@ export function Testimonials() {
               style={{ fontFamily: "var(--font-code-stack)", color: D.muted }}>
               <EncryptedText text="Client Results" duration={900} />
             </p>
-            <h2 className="shimmer-text text-[clamp(26px,3.5vw,36px)] font-[400] leading-[1.1] tracking-[-0.025em]">
+            <h2 className="shimmer-text text-[clamp(26px,3.5vw,36px)] font-[400] leading-[1.1] tracking-[-0.025em] pb-1">
               Trusted by teams
               <br />
               that move fast.

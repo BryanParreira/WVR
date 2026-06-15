@@ -19,6 +19,10 @@ const BASE_TOTAL_S =
     8 * BASE_STEP_MS) /
   1000;
 
+// Reduced scramble counts — still looks good, 3-4× fewer setTimeout callbacks
+const SCRAMBLE_COUNT_CHAR = 12;
+const SCRAMBLE_COUNT_SPACE = 4;
+
 type AccentColor = {
   top: string;
   bottom: string;
@@ -47,11 +51,13 @@ const FlapCell = React.memo(function FlapCell({
   delay,
   stepMs,
   flipDuration,
+  reducedMotion,
 }: {
   target: string;
   delay: number;
   stepMs: number;
   flipDuration: number;
+  reducedMotion: boolean;
 }) {
   const [current, setCurrent] = useState(" ");
   const [prev, setPrev] = useState(" ");
@@ -78,10 +84,20 @@ const FlapCell = React.memo(function FlapCell({
 
     if (normalized === " " && curRef.current === " ") return;
 
+    // Reduced motion: skip scramble, jump straight to target
+    if (reducedMotion) {
+      setPrev(curRef.current);
+      setPrevAccent(accentRef.current);
+      curRef.current = normalized;
+      accentRef.current = null;
+      setCurrent(normalized);
+      setAccent(null);
+      setFlipId((n) => n + 1);
+      return;
+    }
+
     const scrambleCount =
-      normalized === " "
-        ? 8 + Math.floor(Math.random() * 8)
-        : 25 + Math.floor(Math.random() * 15);
+      normalized === " " ? SCRAMBLE_COUNT_SPACE : SCRAMBLE_COUNT_CHAR;
 
     const runStep = (i: number) => {
       const isLast = i === scrambleCount;
@@ -117,10 +133,10 @@ const FlapCell = React.memo(function FlapCell({
       stepTimer.current = null;
       tgtRef.current = null;
     };
-  }, [target, delay, stepMs]);
+  }, [target, delay, stepMs, reducedMotion]);
 
-  const show = current === " " ? "\u00A0" : current;
-  const showPrev = prev === " " ? "\u00A0" : prev;
+  const show = current === " " ? " " : current;
+  const showPrev = prev === " " ? " " : prev;
 
   const textCx =
     "absolute inset-x-0 flex select-none items-center justify-center font-mono font-bold tracking-wide";
@@ -190,6 +206,7 @@ const FlapCell = React.memo(function FlapCell({
               "absolute inset-x-0 top-0 z-10 h-[calc(50%-0.5px)] origin-bottom overflow-hidden rounded-t-[3px] backface-hidden transform-3d",
               flapTopBg,
             )}
+            style={{ willChange: "transform" }}
             initial={{ rotateX: 0 }}
             animate={{ rotateX: -100 }}
             transition={{
@@ -220,6 +237,7 @@ const FlapCell = React.memo(function FlapCell({
               "absolute inset-x-0 bottom-0 z-10 h-[calc(50%-0.5px)] origin-top overflow-hidden rounded-b-[3px] backface-hidden transform-3d",
               bottomBg,
             )}
+            style={{ willChange: "transform" }}
             initial={{ rotateX: 90 }}
             animate={{ rotateX: 0 }}
             transition={{
@@ -259,7 +277,8 @@ const FlapCell = React.memo(function FlapCell({
   prevProps.target === nextProps.target &&
   prevProps.delay === nextProps.delay &&
   prevProps.stepMs === nextProps.stepMs &&
-  prevProps.flipDuration === nextProps.flipDuration,
+  prevProps.flipDuration === nextProps.flipDuration &&
+  prevProps.reducedMotion === nextProps.reducedMotion,
 );
 
 // ── Color Tile ────────────────────────────────────────────────────────
@@ -368,6 +387,16 @@ export function TextFlippingBoard({
   const stepMs = BASE_STEP_MS * scale;
   const flipDur = Math.min(0.6, Math.max(0.15, BASE_FLIP_S * scale));
 
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const board = useMemo(() => {
     const grid: ParsedCell[][] = Array.from({ length: BOARD_ROWS }, () =>
       Array.from({ length: BOARD_COLS }, () => ({
@@ -414,6 +443,7 @@ export function TextFlippingBoard({
         "relative mx-auto w-full max-w-3xl rounded-xl bg-neutral-100 p-2 shadow-xl md:rounded-2xl md:p-4 dark:bg-neutral-900 dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.6)]",
         className,
       )}
+      style={{ contain: "layout style" }}
     >
       <div
         className="grid gap-px md:gap-[3px]"
@@ -430,6 +460,7 @@ export function TextFlippingBoard({
                 delay={c * colDelay + r * rowDelay}
                 stepMs={stepMs}
                 flipDuration={flipDur}
+                reducedMotion={reducedMotion}
               />
             ),
           ),

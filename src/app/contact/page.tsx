@@ -65,7 +65,7 @@ export default function ContactPage() {
               <EncryptedText text="Get In Touch" duration={900} />
             </p>
 
-            <h1 className="shimmer-text text-[clamp(36px,5vw,60px)] font-[400] leading-[1.06] tracking-[-0.035em] mb-6 max-w-2xl">
+            <h1 className="shimmer-text text-[clamp(36px,5vw,60px)] font-[400] leading-[1.06] tracking-[-0.035em] mb-6 max-w-2xl pb-2">
               Let&apos;s build
               <br />
               something great.

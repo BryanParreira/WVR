@@ -137,7 +137,7 @@ export function CapabilitiesSection() {
                 style={{ fontFamily: "var(--font-code-stack)", color: D.muted }}>
                 <EncryptedText text="Core Capabilities" duration={1100} />
               </p>
-              <h2 className="shimmer-text text-[clamp(30px,4vw,42px)] font-[400] leading-[1.08] tracking-[-0.03em]">
+              <h2 className="shimmer-text text-[clamp(30px,4vw,42px)] font-[400] leading-[1.08] tracking-[-0.03em] pb-1">
                 Three disciplines.
                 <br />
                 One team.

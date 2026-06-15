@@ -413,6 +413,7 @@ code, pre, kbd, samp {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: text-shimmer 4s linear infinite;
+  padding-bottom: 0.08em;
 }
 
 /* ─── Glow pulse on focused/featured elements ────────────────────────── */

@@ -214,7 +214,8 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`
 
-    // Try n8n webhook first
+    // Try n8n webhook — fires regardless, does NOT block fallbacks
+    let n8nOk = false
     if (process.env.N8N_WEBHOOK_URL) {
       console.log("[contact] firing n8n webhook...")
       try {
@@ -232,14 +233,19 @@ export async function POST(req: NextRequest) {
           }),
         })
         console.log("[contact] n8n response status:", res.status)
-        if (!res.ok) {
+        if (res.ok) {
+          n8nOk = true
+        } else {
           const body = await res.text()
           console.error("[contact] n8n webhook error:", res.status, body)
         }
       } catch (err) {
         console.error("[contact] n8n webhook failed:", err)
       }
-    } else if (process.env.WEB3FORMS_ACCESS_KEY) {
+    }
+
+    // Fallback email — runs if n8n wasn't used or returned non-OK
+    if (!n8nOk && process.env.WEB3FORMS_ACCESS_KEY) {
       try {
         const res = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
@@ -258,7 +264,7 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error("[contact] Web3Forms failed:", err)
       }
-    } else if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("REPLACE")) {
+    } else if (!n8nOk && process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("REPLACE")) {
       try {
         const { Resend } = await import("resend")
         const resend = new Resend(process.env.RESEND_API_KEY)
@@ -273,7 +279,7 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error("[contact] Resend failed:", err)
       }
-    } else if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    } else if (!n8nOk && process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
       try {
         const nodemailer = await import("nodemailer")
         const transporter = nodemailer.default.createTransport({
