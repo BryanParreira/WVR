@@ -73,13 +73,14 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
     };
 
     const resetPeep = ({ peep }: { peep: Peep }) => {
-      // Scale peep to fit canvas height (65–90% of stage height, randomised per peep)
-      const scaleFactor = (0.65 + Math.random() * 0.25) * stage.height / peep.rect[3];
+      // Scale to 35–55 % of canvas height — gives crowd density, not giant figures
+      const scaleFactor = (0.35 + Math.random() * 0.20) * stage.height / peep.rect[3];
       peep.height = peep.rect[3] * scaleFactor;
       peep.width  = peep.rect[2] * scaleFactor;
 
       const direction = Math.random() > 0.5 ? 1 : -1;
-      const offsetY   = randomRange(-peep.height * 0.15, peep.height * 0.05);
+      // Small Y jitter so peeps appear at slightly different ground levels (depth)
+      const offsetY   = randomRange(-peep.height * 0.08, peep.height * 0.04);
       const startY    = stage.height - peep.height + offsetY;
       let startX: number, endX: number;
 
