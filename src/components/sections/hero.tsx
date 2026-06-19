@@ -184,12 +184,12 @@ export function Hero() {
       {/* Crowd canvas — overlaps stats strip; peeps emerge from beneath hero */}
       <div
         aria-hidden
-        className="relative -mx-6 -mt-16 h-[220px] sm:h-[280px] overflow-hidden"
+        className="relative -mx-6 -mt-24 h-[340px] sm:h-[380px] overflow-hidden"
         style={{ zIndex: 1 }}
       >
         {/* Top fade: blends the overlap area so peeps appear to walk behind */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-40"
           style={{ background: "linear-gradient(to bottom, var(--canvas), transparent)" }}
         />
         {/* Edge fades */}
