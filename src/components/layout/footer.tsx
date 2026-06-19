@@ -117,7 +117,7 @@ export function Footer() {
       </div>
 
       {/* Crowd strip */}
-      <div aria-hidden className="relative h-[280px] sm:h-[340px] overflow-hidden">
+      <div aria-hidden className="relative h-[320px] sm:h-[400px] overflow-hidden">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
           style={{ background: "linear-gradient(to right, var(--canvas), transparent)" }} />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"

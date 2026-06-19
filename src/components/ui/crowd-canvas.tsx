@@ -75,16 +75,13 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
     const resetPeep = ({ peep }: { peep: Peep }) => {
       const direction = Math.random() > 0.5 ? 1 : -1;
 
-      // Pick a random ground line (feet Y) spread across canvas height
-      // 15% min so tiniest peeps don't vanish completely at top
-      const groundY = stage.height * (0.15 + Math.random() * 0.85);
-      // Scale peep so it fits below its ground line (max 90% of groundY tall)
-      peep.height = Math.min(peep.rect[3], groundY * 0.90);
+      // Size varies 60–80% of canvas height — tight range avoids giants vs dwarfs
+      const depthRatio = 0.60 + Math.random() * 0.20;
+      peep.height = stage.height * depthRatio;
       peep.width  = peep.rect[2] * (peep.height / peep.rect[3]);
-      // Head position = ground line minus peep height
-      const startY = groundY - peep.height;
-      // depth ratio for speed/bob: how far down the ground line is
-      const depth = groundY / stage.height;
+
+      // Everyone stands on the same ground line (bottom of canvas)
+      const startY = stage.height - peep.height;
 
       let startX: number, endX: number;
       if (direction === 1) {
@@ -96,19 +93,18 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
       peep.x = startX;
       peep.y = startY;
       peep.anchorY = startY;
-      return { startX, startY, endX, depth };
+      return { startX, startY, endX, depth: depthRatio };
     };
 
     const addPeepToCrowd = () => {
       const peep = removeRandomFromArray(availablePeeps) as Peep;
-      const props = resetPeep({ peep });
-      const { startY, endX, depth } = props;
+      const { startY, endX, depth } = resetPeep({ peep });
       const xDuration = 10;
       const yDuration = 0.25;
-      const bobAmount = 2 + 6 * depth;
+      const bobAmount = 2 + 5 * depth;
 
       const tl = gsap.timeline();
-      tl.timeScale(0.4 + 1.1 * depth);
+      tl.timeScale(0.35 + 0.9 * depth);
       tl.to(peep, { duration: xDuration, x: endX, ease: "none" }, 0);
       tl.to(peep, { duration: yDuration, repeat: xDuration / yDuration, yoyo: true, y: startY - bobAmount }, 0);
       tl.eventCallback("onComplete", () => {

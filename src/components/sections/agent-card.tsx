@@ -1,4 +1,5 @@
 "use client"
+"use no memo";
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { useInView, AnimatePresence, motion } from "framer-motion"
@@ -16,11 +17,95 @@ const D = {
   primary: "#22b5d4",
 }
 
-// delay = ms to wait before revealing this line
-type Line          = { text: string; color?: string; delay?: number }
+// ─── Glitch ───────────────────────────────────────────────────────────────────
+const GLITCH_CHARS = "█▓▒░▄▀■□01∆∇◆►◄↕⌗"
+
+function scramble(text: string): string {
+  return text.split("").map(c =>
+    c === " " ? " " : GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+  ).join("")
+}
+
+function GlitchText({ text }: { text: string }) {
+  const [display, setDisplay] = useState(() => text.trim() ? scramble(text) : text)
+
+  useEffect(() => {
+    if (!text.trim()) { setDisplay(text); return }
+    let n = 0
+    const id = setInterval(() => {
+      n++
+      if (n >= 5) { setDisplay(text); clearInterval(id) }
+      else setDisplay(scramble(text))
+    }, 36)
+    return () => clearInterval(id)
+  }, [text])
+
+  return <>{display}</>
+}
+
+// ─── Progress bar ─────────────────────────────────────────────────────────────
+function ProgressBar({ label, done, duration, color }: {
+  label: string; done: string; duration: number; color: string
+}) {
+  const [pct, setPct] = useState(0)
+  const rafRef = useRef<number>(0)
+
+  useEffect(() => {
+    const start = Date.now()
+    const tick = () => {
+      const p = Math.min(100, Math.round(((Date.now() - start) / duration) * 100))
+      setPct(p)
+      if (p < 100) rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [duration])
+
+  const W = 20
+  const filled = Math.round(pct / 100 * W)
+  const bar = "█".repeat(filled) + "░".repeat(W - filled)
+  const glow = pct === 100 ? { textShadow: "0 0 8px rgba(52,211,153,0.45), 0 0 18px rgba(52,211,153,0.18)" } : {}
+
+  return (
+    <div className="text-[13px] leading-[1.65]" style={{ color, fontFamily: "var(--font-mono)", ...glow }}>
+      {`  [${bar}] ${String(pct).padStart(3)}%`}
+      {pct === 100 ? ` ✓ ${done}` : `  ${label}…`}
+    </div>
+  )
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+type TextLine     = { text: string; color?: string; delay?: number }
+type ProgressLine = { type: "progress"; label: string; done: string; duration: number; color?: string; delay?: number }
+type Line         = TextLine | ProgressLine
 type HistoryEntry  = { command: string; lines: Line[] }
 type ActiveOutput  = { command: string; lines: Line[]; revealed: number }
 
+function isProgress(l: Line): l is ProgressLine {
+  return "type" in l && (l as ProgressLine).type === "progress"
+}
+
+function glowFor(color?: string): React.CSSProperties {
+  if (color === D.green)   return { textShadow: "0 0 8px rgba(52,211,153,0.35), 0 0 18px rgba(52,211,153,0.12)" }
+  if (color === D.primary) return { textShadow: "0 0 8px rgba(34,181,212,0.35), 0 0 18px rgba(34,181,212,0.12)" }
+  if (color === D.ink)     return { textShadow: "0 0 6px rgba(240,237,232,0.12)" }
+  return {}
+}
+
+function renderLine(line: Line, j: number, enableGlitch = false) {
+  if (isProgress(line)) {
+    return <ProgressBar key={j} label={line.label} done={line.done} duration={line.duration} color={line.color ?? D.green} />
+  }
+  const text = line.text || " "
+  const shouldGlitch = enableGlitch && line.text.trim() !== ""
+  return (
+    <div key={j} className="text-[13px] leading-[1.65]" style={{ color: line.color ?? D.body, ...glowFor(line.color) }}>
+      {shouldGlitch ? <GlitchText text={text} /> : text}
+    </div>
+  )
+}
+
+// ─── Welcome ──────────────────────────────────────────────────────────────────
 const WELCOME: Line[] = [
   { text: "WebVisionRank CLI", color: D.ink },
   { text: "─".repeat(46), color: D.dim },
@@ -30,47 +115,47 @@ const WELCOME: Line[] = [
   { text: "" },
 ]
 
-// ─── run <workflow> outputs ────────────────────────────────────────────────────
+// ─── Run workflows (with live progress bars) ──────────────────────────────────
 const RUN_WORKFLOWS: Record<string, () => Line[]> = {
   "crm-automation": () => [
-    { text: "→ CRM-Automation Agent", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o-mini  ·  temp: 0", delay: 80 },
+    { text: "→ CRM-Automation Agent v2.1", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: production", delay: 80 },
     { text: "", delay: 60 },
-    { text: "  ✓ fetch_deals()      →  142 records    210ms", color: D.green, delay: 240 },
-    { text: "  ✓ enrich_leads()     →  all enriched   490ms", color: D.green, delay: 510 },
-    { text: "  ✓ score_intent()     →  47 qualified   340ms", color: D.green, delay: 360 },
-    { text: "  ✓ update_crm()       →  synced          89ms", color: D.green, delay: 110 },
-    { text: "", delay: 60 },
+    { type: "progress", label: "fetch_deals",  done: "142 records",  duration: 700,  color: D.green, delay: 120 },
+    { type: "progress", label: "enrich_leads", done: "all enriched", duration: 1100, color: D.green, delay: 80  },
+    { type: "progress", label: "score_intent", done: "47 qualified", duration: 850,  color: D.green, delay: 80  },
+    { type: "progress", label: "update_crm",   done: "synced",       duration: 500,  color: D.green, delay: 80  },
+    { text: "", delay: 1000 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
     { text: "  ✓ saved 5.8h · cost: $0.43 · labor equiv: $290", color: D.green, delay: 80 },
   ],
   "content-pipeline": () => [
-    { text: "→ Content-Pipeline Agent", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o  ·  temp: 0.7", delay: 80 },
+    { text: "→ Content-Pipeline Agent v1.4", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o  ·  temp: 0.7  ·  mode: production", delay: 80 },
     { text: "", delay: 60 },
-    { text: "  ✓ scrape_trends()    →  28 topics      280ms", color: D.green, delay: 300 },
-    { text: "  ✓ draft_articles()   →  12 drafts      680ms", color: D.green, delay: 700 },
-    { text: "  ✓ seo_optimize()     →  score: 94      420ms", color: D.green, delay: 440 },
-    { text: "  ✓ publish_batch()    →  published      150ms", color: D.green, delay: 170 },
-    { text: "", delay: 60 },
+    { type: "progress", label: "scrape_trends",  done: "28 topics",  duration: 700,  color: D.green, delay: 120 },
+    { type: "progress", label: "draft_articles", done: "12 drafts",  duration: 1500, color: D.green, delay: 80  },
+    { type: "progress", label: "seo_optimize",   done: "score: 94",  duration: 900,  color: D.green, delay: 80  },
+    { type: "progress", label: "publish_batch",  done: "published",  duration: 600,  color: D.green, delay: 80  },
+    { text: "", delay: 1400 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
     { text: "  ✓ saved 9.2h · cost: $0.81 · labor equiv: $690", color: D.green, delay: 80 },
   ],
   "invoice-processor": () => [
-    { text: "→ Invoice-Processor Agent", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o-mini  ·  temp: 0", delay: 80 },
+    { text: "→ Invoice-Processor Agent v3.0", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: production", delay: 80 },
     { text: "", delay: 60 },
-    { text: "  ✓ fetch_invoices()   →  89 pending     160ms", color: D.green, delay: 180 },
-    { text: "  ✓ classify_items()   →  categorized    350ms", color: D.green, delay: 370 },
-    { text: "  ✓ extract_data()     →  structured     580ms", color: D.green, delay: 600 },
-    { text: "  ✓ sync_accounting()  →  posted         200ms", color: D.green, delay: 220 },
-    { text: "", delay: 60 },
+    { type: "progress", label: "fetch_invoices",  done: "89 pending",  duration: 600,  color: D.green, delay: 120 },
+    { type: "progress", label: "classify_items",  done: "categorized", duration: 900,  color: D.green, delay: 80  },
+    { type: "progress", label: "extract_data",    done: "structured",  duration: 1200, color: D.green, delay: 80  },
+    { type: "progress", label: "sync_accounting", done: "posted",      duration: 500,  color: D.green, delay: 80  },
+    { text: "", delay: 1200 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
     { text: "  ✓ saved 7.1h · cost: $0.56 · labor equiv: $520", color: D.green, delay: 80 },
   ],
 }
 
-// ─── Static commands ───────────────────────────────────────────────────────────
+// ─── Static commands ──────────────────────────────────────────────────────────
 const CMDS: Record<string, () => Line[]> = {
   help: () => [
     { text: "Commands:", color: D.ink },
@@ -238,7 +323,6 @@ const ALL_COMPLETIONS = [
   "run invoice-processor",
 ]
 
-// Quick-access chips shown when focused + no input
 const QUICK_CHIPS = [
   { label: "services",           desc: "what we build"    },
   { label: "ai",                 desc: "AI & automation"  },
@@ -248,8 +332,8 @@ const QUICK_CHIPS = [
   { label: "pricing",            desc: "tiers"            },
 ]
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
+// ─── Component ────────────────────────────────────────────────────────────────
 export function AgentCard() {
   const wrapRef  = useRef<HTMLDivElement>(null)
   const bodyRef  = useRef<HTMLDivElement>(null)
@@ -271,14 +355,12 @@ export function AgentCard() {
   const autoIdsRef        = useRef<ReturnType<typeof setTimeout>[]>([])
   const autoPhaseRef      = useRef(0)
 
-  // Suggestions computed from input
   const suggestions = useMemo(() => {
     const val = input.trim().toLowerCase()
     if (!val) return []
     return ALL_COMPLETIONS.filter(c => c.startsWith(val)).slice(0, 6)
   }, [input])
 
-  // Reset suggIdx when suggestions change
   useEffect(() => { setSuggIdx(-1) }, [suggestions])
 
   const cancelAuto = useCallback(() => {
@@ -388,7 +470,7 @@ export function AgentCard() {
     autoIdsRef.current.push(setTimeout(type, 60))
   }, [run])
 
-  // Phase advancement — fires when output animation finishes
+  // Phase advancement
   useEffect(() => {
     if (active !== null || !ready || userInteractedRef.current) return
     if (autoPhaseRef.current === 0 && history.length === 1 && history[0].command === "") {
@@ -411,6 +493,7 @@ export function AgentCard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, history, ready])
 
+
   // ─── Input handlers ──────────────────────────────────────────────────────────
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (active) {
@@ -421,12 +504,8 @@ export function AgentCard() {
     if (e.key === "Enter") {
       e.preventDefault()
       if (suggestions.length > 0 && suggIdx >= 0) {
-        const picked = suggestions[suggIdx]
-        setInput(picked)
-        setSuggIdx(-1)
-        // Run immediately if it's a complete command
         setInput("")
-        run(picked)
+        run(suggestions[suggIdx])
       } else {
         run(input)
         setInput("")
@@ -474,21 +553,12 @@ export function AgentCard() {
     setInput(e.target.value)
   }, [active])
 
-  const handleFocus = useCallback(() => {
-    setFocused(true)
-    cancelAuto()
-  }, [cancelAuto])
-
-  const focusInput = useCallback(() => inputRef.current?.focus(), [])
-
-  const pickChip = useCallback((cmd: string) => {
-    setInput("")
-    setSuggIdx(-1)
-    run(cmd)
-    inputRef.current?.focus()
+  const handleFocus   = useCallback(() => { setFocused(true); cancelAuto() }, [cancelAuto])
+  const focusInput    = useCallback(() => inputRef.current?.focus(), [])
+  const pickChip      = useCallback((cmd: string) => {
+    setInput(""); setSuggIdx(-1); run(cmd); inputRef.current?.focus()
   }, [run])
 
-  // Determine what to show in the suggestion strip
   const showSuggestions = focused && !active && suggestions.length > 0
   const showQuickChips  = focused && !active && !input && history.length > 0
 
@@ -504,212 +574,220 @@ export function AgentCard() {
       }}
       onClick={focusInput}
     >
-      {/* Hidden keyboard capture */}
-      <input
-        ref={inputRef}
-        value={input}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onFocus={handleFocus}
-        onBlur={() => setFocused(false)}
-        style={{ position: "absolute", opacity: 0, width: 1, height: 1, top: 0, left: 0, padding: 0, border: "none" }}
-        aria-label="Terminal — type commands to explore WebVisionRank"
-        autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
-      />
+        {/* Hidden keyboard capture */}
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={() => setFocused(false)}
+          style={{ position: "absolute", opacity: 0, width: 1, height: 1, top: 0, left: 0, padding: 0, border: "none" }}
+          aria-label="Terminal — type commands to explore WebVisionRank"
+          autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
+        />
 
-      {/* Title bar */}
-      <div
-        className="flex items-center justify-between px-4 py-3"
-        style={{ background: D.surface, borderBottom: `1px solid ${D.border}` }}
-      >
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
-          <div className="h-3 w-3 rounded-full" style={{ background: "#ffbd2e" }} />
-          <div className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
-        </div>
-        <span className="text-[12px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
-          wvr-cli — bash
-        </span>
-        <div className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
-            style={{ background: focused ? "#5a5852" : D.dim }} />
-          <span className="text-[11px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
-            {focused ? "active" : "click to type"}
+
+        {/* Title bar */}
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{ background: D.surface, borderBottom: `1px solid ${D.border}` }}
+        >
+          <div className="flex items-center gap-1.5">
+            <div className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
+            <div className="h-3 w-3 rounded-full" style={{ background: "#ffbd2e" }} />
+            <div className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
+          </div>
+          <span className="text-[12px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
+            wvr-cli — bash
           </span>
-        </div>
-      </div>
-
-      {/* Terminal body */}
-      <div
-        ref={bodyRef}
-        className="h-[340px] overflow-y-auto p-5"
-        style={{ fontFamily: "var(--font-mono)", background: D.bg }}
-      >
-        {/* History */}
-        {history.map((entry, i) => (
-          <div key={i} className="mb-4">
-            {entry.command && (
-              <div className="flex items-baseline gap-x-2 text-[13px] mb-1.5">
-                <span style={{ color: D.muted }}>~</span>
-                <span style={{ color: D.primary }}>$</span>
-                <span style={{ color: D.body }}>{entry.command}</span>
-              </div>
-            )}
-            {entry.lines.map((line, j) => (
-              <div key={j} className="text-[13px] leading-[1.65]" style={{ color: line.color ?? D.body }}>
-                {line.text || " "}
-              </div>
-            ))}
-          </div>
-        ))}
-
-        {/* Animating output */}
-        {active && (
-          <div className="mb-4">
-            {active.command && (
-              <div className="flex items-baseline gap-x-2 text-[13px] mb-1.5">
-                <span style={{ color: D.muted }}>~</span>
-                <span style={{ color: D.primary }}>$</span>
-                <span style={{ color: D.body }}>{active.command}</span>
-              </div>
-            )}
-            {active.lines.slice(0, active.revealed).map((line, j) => (
-              <div key={j} className="text-[13px] leading-[1.65]" style={{ color: line.color ?? D.body }}>
-                {line.text || " "}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Live input prompt */}
-        {!active && (
-          <div className="flex items-center text-[13px]">
-            <span style={{ color: D.muted, marginRight: 6 }}>~</span>
-            <span style={{ color: D.primary, marginRight: 6 }}>$</span>
-            <span style={{ color: D.body }}>
-              {/* Highlight matched prefix in suggestions */}
-              {suggIdx >= 0 && suggestions[suggIdx]
-                ? <span style={{ color: D.ink }}>{suggestions[suggIdx]}</span>
-                : input
-              }
-              <span style={{
-                display: "inline-block", verticalAlign: "middle",
-                width: 7, height: 14, marginLeft: 1,
-                background: focused && cursorOn ? D.body : "transparent",
-                borderRadius: 1, flexShrink: 0,
-              }} />
+          <div className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
+              style={{ background: focused ? "#5a5852" : D.dim }} />
+            <span className="text-[11px]" style={{ fontFamily: "var(--font-mono)", color: D.muted }}>
+              {focused ? "active" : "click to type"}
             </span>
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* ── Suggestion / Quick-access strip ── */}
-      <AnimatePresence>
-        {(showSuggestions || showQuickChips) && (
-          <motion.div
-            key={showSuggestions ? "suggestions" : "quick"}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+        {/* Terminal body */}
+        <div
+          ref={bodyRef}
+          className="relative h-[340px] overflow-y-auto p-5"
+          style={{ fontFamily: "var(--font-mono)", background: D.bg }}
+        >
+          {/* CRT scanlines */}
+          <div
+            aria-hidden
             style={{
-              overflow:    "hidden",
-              borderTop:   `1px solid ${D.border}`,
-              background:  D.surface,
+              position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)",
             }}
-          >
-            <div className="px-4 py-3">
-              {showSuggestions ? (
-                <>
-                  <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
-                    style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
-                    Completions — ↑↓ navigate · [tab] cycle · enter run
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {suggestions.map((s, i) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onMouseDown={e => { e.preventDefault(); pickChip(s) }}
-                        className="flex items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-[12px] transition-all duration-100"
-                        style={{
-                          background: i === suggIdx ? "rgba(240,237,232,0.09)" : "rgba(240,237,232,0.03)",
-                          border:     `1px solid ${i === suggIdx ? "rgba(240,237,232,0.22)" : D.border}`,
-                          color:      i === suggIdx ? D.ink : D.muted,
-                          fontFamily: "var(--font-mono)",
-                        }}
-                      >
-                        {s}
-                        {i === suggIdx && (
-                          <span className="text-[10px]" style={{ color: D.dim }}>↵</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
-                    style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
-                    Quick commands
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {QUICK_CHIPS.map(({ label, desc }) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onMouseDown={e => { e.preventDefault(); pickChip(label) }}
-                        className="flex items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-[12px] transition-all duration-150 group"
-                        style={{
-                          background: "rgba(240,237,232,0.03)",
-                          border:     `1px solid ${D.border}`,
-                          color:      D.muted,
-                          fontFamily: "var(--font-mono)",
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.background = "rgba(240,237,232,0.07)"
-                          e.currentTarget.style.borderColor = "rgba(240,237,232,0.15)"
-                          e.currentTarget.style.color = D.body
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.background = "rgba(240,237,232,0.03)"
-                          e.currentTarget.style.borderColor = D.border
-                          e.currentTarget.style.color = D.muted
-                        }}
-                      >
-                        <span>{label}</span>
-                        <span className="text-[10px]" style={{ color: D.dim }}>{desc}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          />
 
-      {/* Status bar */}
-      <div
-        className="flex items-center justify-between px-4 py-2"
-        style={{ background: D.surface, borderTop: `1px solid ${D.border}` }}
-      >
-        <span className="text-[11px]" style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
-          WVR CLI v1.0
-        </span>
-        <span className="text-[11px]" style={{ color: D.muted, fontFamily: "var(--font-mono)" }}>
-          <span className="hidden sm:inline">
-            {showSuggestions
-              ? "↑↓ navigate · tab cycle · enter run · esc cancel"
-              : focused
-              ? "↑↓ history · tab complete · enter run · esc clear"
-              : "click to type · auto-demo active"}
+          {/* Content (above scanlines) */}
+          <div className="relative" style={{ zIndex: 3 }}>
+            {/* History */}
+            {history.map((entry, i) => (
+              <div key={i} className="mb-4">
+                {entry.command && (
+                  <div className="flex items-baseline gap-x-1.5 text-[13px] mb-1.5">
+                    <span style={{ color: D.muted }}>wvr@cli</span>
+                    <span style={{ color: D.dim }}>:</span>
+                    <span style={{ color: D.primary, textShadow: "0 0 8px rgba(34,181,212,0.3)" }}>~</span>
+                    <span style={{ color: D.primary, marginLeft: 2, textShadow: "0 0 8px rgba(34,181,212,0.3)" }}>$</span>
+                    <span style={{ color: D.body, marginLeft: 4 }}>{entry.command}</span>
+                  </div>
+                )}
+                {entry.lines.map((line, j) => renderLine(line, j, false))}
+              </div>
+            ))}
+
+            {/* Animating output */}
+            {active && (
+              <div className="mb-4">
+                {active.command && (
+                  <div className="flex items-baseline gap-x-1.5 text-[13px] mb-1.5">
+                    <span style={{ color: D.muted }}>wvr@cli</span>
+                    <span style={{ color: D.dim }}>:</span>
+                    <span style={{ color: D.primary, textShadow: "0 0 8px rgba(34,181,212,0.3)" }}>~</span>
+                    <span style={{ color: D.primary, marginLeft: 2, textShadow: "0 0 8px rgba(34,181,212,0.3)" }}>$</span>
+                    <span style={{ color: D.body, marginLeft: 4 }}>{active.command}</span>
+                  </div>
+                )}
+                {active.lines.slice(0, active.revealed).map((line, j) =>
+                  renderLine(line, j, j < 2)
+                )}
+              </div>
+            )}
+
+            {/* Live input prompt */}
+            {!active && (
+              <div className="flex items-center text-[13px]">
+                <span style={{ color: D.muted, marginRight: 3 }}>wvr@cli</span>
+                <span style={{ color: D.dim, marginRight: 3 }}>:</span>
+                <span style={{ color: D.primary, marginRight: 6, textShadow: "0 0 8px rgba(34,181,212,0.3)" }}>~$</span>
+                <span style={{ color: D.body }}>
+                  {suggIdx >= 0 && suggestions[suggIdx]
+                    ? <span style={{ color: D.ink }}>{suggestions[suggIdx]}</span>
+                    : input
+                  }
+                  <span style={{
+                    display: "inline-block", verticalAlign: "middle",
+                    width: 7, height: 14, marginLeft: 1,
+                    background: focused && cursorOn ? D.body : "transparent",
+                    boxShadow: focused && cursorOn ? "0 0 6px rgba(160,156,146,0.5)" : "none",
+                    borderRadius: 1,
+                  }} />
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Suggestion / Quick-access strip */}
+        <AnimatePresence>
+          {(showSuggestions || showQuickChips) && (
+            <motion.div
+              key={showSuggestions ? "suggestions" : "quick"}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              style={{ overflow: "hidden", borderTop: `1px solid ${D.border}`, background: D.surface }}
+            >
+              <div className="px-4 py-3">
+                {showSuggestions ? (
+                  <>
+                    <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
+                      style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
+                      Completions — ↑↓ navigate · [tab] cycle · enter run
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {suggestions.map((s, i) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onMouseDown={e => { e.preventDefault(); pickChip(s) }}
+                          className="flex items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-[12px] transition-all duration-100"
+                          style={{
+                            background: i === suggIdx ? "rgba(240,237,232,0.09)" : "rgba(240,237,232,0.03)",
+                            border:     `1px solid ${i === suggIdx ? "rgba(240,237,232,0.22)" : D.border}`,
+                            color:      i === suggIdx ? D.ink : D.muted,
+                            fontFamily: "var(--font-mono)",
+                          }}
+                        >
+                          {s}
+                          {i === suggIdx && (
+                            <span className="text-[10px]" style={{ color: D.dim }}>↵</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-[9px] uppercase tracking-[0.12em] mb-2"
+                      style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
+                      Quick commands
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {QUICK_CHIPS.map(({ label, desc }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onMouseDown={e => { e.preventDefault(); pickChip(label) }}
+                          className="flex items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-[12px] transition-all duration-150"
+                          style={{
+                            background: "rgba(240,237,232,0.03)",
+                            border:     `1px solid ${D.border}`,
+                            color:      D.muted,
+                            fontFamily: "var(--font-mono)",
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.background = "rgba(240,237,232,0.07)"
+                            e.currentTarget.style.borderColor = "rgba(240,237,232,0.15)"
+                            e.currentTarget.style.color = D.body
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.background = "rgba(240,237,232,0.03)"
+                            e.currentTarget.style.borderColor = D.border
+                            e.currentTarget.style.color = D.muted
+                          }}
+                        >
+                          <span>{label}</span>
+                          <span className="text-[10px]" style={{ color: D.dim }}>{desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Status bar */}
+        <div
+          className="flex items-center justify-between px-4 py-2"
+          style={{ background: D.surface, borderTop: `1px solid ${D.border}` }}
+        >
+          <span className="text-[11px]" style={{ color: D.dim, fontFamily: "var(--font-mono)" }}>
+            WVR CLI v1.0
           </span>
-          <span className="sm:hidden">
-            {focused ? "↑↓ · tab · enter · esc" : "tap to type"}
+          <span className="text-[11px]" style={{ color: D.muted, fontFamily: "var(--font-mono)" }}>
+            <span className="hidden sm:inline">
+              {showSuggestions
+                ? "↑↓ navigate · tab cycle · enter run · esc cancel"
+                : focused
+                ? "↑↓ history · tab complete · enter run · esc clear"
+                : "click to type · auto-demo active"}
+            </span>
+            <span className="sm:hidden">
+              {focused ? "↑↓ · tab · enter · esc" : "tap to type"}
+            </span>
           </span>
-        </span>
-      </div>
+        </div>
     </div>
   )
 }
