@@ -25,7 +25,7 @@ const TRANSITION_CSS = `
   }
   @keyframes wvr-reveal {
     from {
-      clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+      clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
       filter: blur(8px);
     }
     50% { filter: blur(4px); }
