@@ -43,7 +43,7 @@ export default function ServicesPage() {
         <div className="mx-auto max-w-[1200px]">
           <AnimateIn>
             <p className="caption-uppercase mb-3"><EncryptedText text="What We Do" duration={900} /></p>
-            <h1 className="display-mega max-w-3xl">
+            <h1 className="display-lg max-w-3xl">
               Services built for
               <br />
               <FlipWords

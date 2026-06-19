@@ -8,6 +8,7 @@ import { CheckCircle, Loader2, AlertCircle, ArrowRight } from "lucide-react"
 import HCaptcha from "@hcaptcha/react-hcaptcha"
 import { contactSchema, type ContactFormData } from "@/lib/validations"
 import { cn } from "@/lib/utils"
+import { SmoothInput } from "@/components/ui/smooth-input"
 
 const D = {
   bg:      "var(--canvas-soft)",
@@ -53,10 +54,15 @@ function useFormContext(): { service?: ContactFormData["service"]; planLabel?: s
   return {}
 }
 
-// Shared dark field styles
+// Shared field styles
 const fieldBase = cn(
   "flex w-full rounded-[8px] border px-4 py-3 text-[15px] transition-colors duration-150 outline-none",
-  "focus:ring-1",
+  "focus:ring-1 focus:ring-hairline-strong",
+)
+// Wrapper for SmoothInput — border/bg go on wrapper via wrapperStyle, not on the input
+const smoothFieldBase = cn(
+  "w-full rounded-[8px] px-4 py-3 text-[15px] transition-colors duration-150",
+  "has-[:focus-within]:ring-1 has-[:focus-within]:ring-hairline-strong",
 )
 const fieldStyle = {
   background:  D.bg,
@@ -167,13 +173,15 @@ export function ContactForm() {
           <label htmlFor="name" className="text-[13px] font-medium" style={{ color: D.body }}>
             Full Name
           </label>
-          <input
+          <SmoothInput
             id="name"
             placeholder="Alex Johnson"
             autoComplete="name"
             aria-invalid={!!errors.name}
-            className={fieldBase}
-            style={fieldStyle}
+            wrapperClassName={smoothFieldBase}
+            wrapperStyle={fieldStyle}
+            className="bg-transparent outline-none w-full placeholder:opacity-50"
+            style={{ color: D.ink }}
             {...register("name")}
           />
           {errors.name && (
@@ -184,14 +192,16 @@ export function ContactForm() {
           <label htmlFor="email" className="text-[13px] font-medium" style={{ color: D.body }}>
             Email Address
           </label>
-          <input
+          <SmoothInput
             id="email"
             type="email"
             placeholder="alex@company.com"
             autoComplete="email"
             aria-invalid={!!errors.email}
-            className={fieldBase}
-            style={fieldStyle}
+            wrapperClassName={smoothFieldBase}
+            wrapperStyle={fieldStyle}
+            className="bg-transparent outline-none w-full placeholder:opacity-50"
+            style={{ color: D.ink }}
             {...register("email")}
           />
           {errors.email && (
@@ -206,12 +216,14 @@ export function ContactForm() {
           Company{" "}
           <span className="font-normal" style={{ color: D.dim }}>(optional)</span>
         </label>
-        <input
+        <SmoothInput
           id="company"
           placeholder="Acme Corp"
           autoComplete="organization"
-          className={fieldBase}
-          style={fieldStyle}
+          wrapperClassName={smoothFieldBase}
+          wrapperStyle={fieldStyle}
+          className="bg-transparent outline-none w-full placeholder:opacity-50"
+          style={{ color: D.ink }}
           {...register("company")}
         />
       </div>

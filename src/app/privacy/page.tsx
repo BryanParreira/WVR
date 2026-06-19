@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <div className="mx-auto max-w-[720px]">
           <AnimateIn>
             <p className="caption-uppercase mb-4">Legal</p>
-            <h1 className="display-md text-ink mb-2">Privacy Policy</h1>
+            <h1 className="display-lg text-ink mb-2">Privacy Policy</h1>
             <p className="text-[13px] text-muted mb-14">
               Effective: {EFFECTIVE_DATE} · Last updated: {EFFECTIVE_DATE}
             </p>

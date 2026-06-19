@@ -58,7 +58,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-[1200px]">
           <AnimateIn>
             <p className="caption-uppercase mb-3"><EncryptedText text="Pricing" duration={800} /></p>
-            <h1 className="display-mega max-w-2xl">
+            <h1 className="display-lg max-w-2xl">
               Invest in growth.
               <br />
               <FlipWords

@@ -2,18 +2,13 @@
 
 import { useRef, useEffect, useState } from "react"
 import Link from "next/link"
-import { motion, AnimatePresence, useInView } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AgentCard } from "@/components/sections/agent-card"
 import { FlipWords } from "@/components/ui/flip-words"
+import { CrowdCanvas } from "@/components/ui/crowd-canvas"
 
-const CAPABILITIES = [
-  { label: "Agentic AI Automation", dot: "#fbbf24" },
-  { label: "Zero Trust Security",   dot: "#34d399" },
-  { label: "GEO Optimization",      dot: "#60a5fa" },
-  { label: "Custom Development",    dot: "#a09c92" },
-]
 
 function AnimatedNumber({ value }: { value: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -52,20 +47,11 @@ function AnimatedNumber({ value }: { value: string }) {
 }
 
 export function Hero() {
-  const [capIdx, setCapIdx] = useState(0)
-
-  useEffect(() => {
-    const t = setInterval(() => setCapIdx(i => (i + 1) % CAPABILITIES.length), 2600)
-    return () => clearInterval(t)
-  }, [])
-
-  const cap = CAPABILITIES[capIdx]
-
   return (
     <section className="relative bg-canvas pt-12 pb-0 px-6 sm:pt-20 overflow-hidden">
 
       {/* ── Ambient orb A — top right (larger, more visible) ── */}
-      <div aria-hidden className="pointer-events-none absolute rounded-full"
+      <div aria-hidden className="pointer-events-none absolute rounded-full dark:hidden"
         style={{
           top: "-220px", right: "4%",
           width: "800px", height: "800px",
@@ -74,7 +60,7 @@ export function Hero() {
         }} />
 
       {/* ── Ambient orb B — mid left ── */}
-      <div aria-hidden className="pointer-events-none absolute rounded-full"
+      <div aria-hidden className="pointer-events-none absolute rounded-full dark:hidden"
         style={{
           top: "22%", left: "-20%",
           width: "700px", height: "700px",
@@ -83,36 +69,16 @@ export function Hero() {
         }} />
 
       {/* ── Ambient orb C — bottom center ── */}
-      <div aria-hidden className="pointer-events-none absolute rounded-full"
+      <div aria-hidden className="pointer-events-none absolute rounded-full dark:hidden"
         style={{
           bottom: "0%", left: "30%",
           width: "600px", height: "300px",
           background: "radial-gradient(ellipse, rgba(38,37,30,0.04) 0%, transparent 70%)",
         }} />
 
-      <div className="relative mx-auto max-w-[1200px]">
+      <div className="relative z-10 mx-auto max-w-[1200px]">
 
-        {/* ── Cycling capability badge ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1,  y: 0 }}
-          transition={{ duration: 0.35, delay: 0.05 }}
-          className="mb-6">
-          <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-hairline bg-surface shadow-card">
-            <span className="h-1.5 w-1.5 rounded-full flex-shrink-0 animate-pulse"
-              style={{ background: cap.dot, transition: "background 0.4s ease" }} />
-            <AnimatePresence mode="wait">
-              <motion.span key={capIdx}
-                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.22 }}
-                className="text-[12px] font-medium text-ink"
-                style={{ fontFamily: "var(--font-mono)" }}>
-                {cap.label}
-              </motion.span>
-            </AnimatePresence>
-            <span className="text-[11px] text-muted shrink-0">— now available</span>
-          </div>
-        </motion.div>
+
 
         {/* Headline */}
         <motion.h1
@@ -213,6 +179,35 @@ export function Hero() {
             </div>
           ))}
         </motion.div>
+      </div>
+
+      {/* Crowd canvas — overlaps stats strip; peeps emerge from beneath hero */}
+      <div
+        aria-hidden
+        className="relative -mx-6 -mt-16 h-[200px] sm:h-[260px] overflow-hidden"
+        style={{ zIndex: 1 }}
+      >
+        {/* Top fade: blends the overlap area so peeps appear to walk behind */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
+          style={{ background: "linear-gradient(to bottom, var(--canvas), transparent)" }}
+        />
+        {/* Edge fades */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
+          style={{ background: "linear-gradient(to right, var(--canvas), transparent)" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
+          style={{ background: "linear-gradient(to left, var(--canvas), transparent)" }}
+        />
+        <CrowdCanvas
+          src="/images/peeps/all-peeps.png"
+          rows={15}
+          cols={7}
+          excludeIndices={[17, 72, 92, 100]}
+          className="absolute bottom-0 left-0 h-full w-full"
+        />
       </div>
     </section>
   )

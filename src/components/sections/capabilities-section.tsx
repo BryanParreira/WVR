@@ -22,21 +22,12 @@ const D = {
   muted:   "var(--muted)",
 }
 
-type Accent = { color: string; bg: string; border: string }
-
-const A: Record<string, Accent> = {
-  ai:       { color: "#fbbf24", bg: "rgba(251,191,36,0.10)",  border: "rgba(251,191,36,0.20)"  },
-  security: { color: "#818cf8", bg: "rgba(129,140,248,0.10)", border: "rgba(129,140,248,0.20)" },
-  dev:      { color: "#34d399", bg: "rgba(52,211,153,0.10)",  border: "rgba(52,211,153,0.20)"  },
-  geo:      { color: "#60a5fa", bg: "rgba(96,165,250,0.10)",  border: "rgba(96,165,250,0.20)"  },
-}
-
-function Tag({ icon: Icon, label, accent }: { icon: React.ElementType; label: string; accent: Accent }) {
+function Tag({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
       <div className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[8px]"
-        style={{ background: accent.bg, border: `1px solid ${accent.border}` }}>
-        <Icon className="h-[16px] w-[16px]" style={{ color: accent.color }} strokeWidth={1.75} />
+        style={{ background: "var(--ink-faint)", border: `1px solid ${D.border}` }}>
+        <Icon className="h-[16px] w-[16px]" style={{ color: D.muted }} strokeWidth={1.75} />
       </div>
       <span className="text-[11px] uppercase tracking-[0.12em]"
         style={{ fontFamily: "var(--font-code-stack)", color: D.muted }}>
@@ -57,13 +48,13 @@ function Ordinal({ n }: { n: string }) {
   )
 }
 
-function Bullets({ items, accent }: { items: string[]; accent: Accent }) {
+function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="mt-4 space-y-2">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-2.5 text-[13px]" style={{ color: D.muted }}>
           <span className="mt-[5px] h-1 w-1 flex-shrink-0 rounded-full"
-            style={{ background: accent.color, opacity: 0.45 }} />
+            style={{ background: D.muted, opacity: 0.35 }} />
           {item}
         </li>
       ))}
@@ -71,9 +62,8 @@ function Bullets({ items, accent }: { items: string[]; accent: Accent }) {
   )
 }
 
-function CardInner({ children, accentColor, hovered }: {
+function CardInner({ children, hovered }: {
   children: React.ReactNode
-  accentColor: string
   hovered: boolean
 }) {
   return (
@@ -86,8 +76,8 @@ function CardInner({ children, accentColor, hovered }: {
       {/* Top accent line — hover only */}
       <div className="absolute top-0 left-0 right-0 h-[1px]"
         style={{
-          background: `linear-gradient(90deg, transparent 0%, ${accentColor} 40%, ${accentColor} 60%, transparent 100%)`,
-          opacity: hovered ? 0.42 : 0,
+          background: `linear-gradient(90deg, transparent 0%, ${D.muted} 40%, ${D.muted} 60%, transparent 100%)`,
+          opacity: hovered ? 0.3 : 0,
           transition: "opacity 0.3s ease",
         }} />
       {children}
@@ -95,10 +85,7 @@ function CardInner({ children, accentColor, hovered }: {
   )
 }
 
-function BentoCard({ children, accentColor }: {
-  children: React.ReactNode
-  accentColor: string
-}) {
+function BentoCard({ children }: { children: React.ReactNode }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
@@ -108,7 +95,7 @@ function BentoCard({ children, accentColor }: {
       onMouseLeave={() => setHovered(false)}
     >
       <GlowingEffect disabled={!hovered} spread={50} glow={false} proximity={64} inactiveZone={0.01} />
-      <CardInner accentColor={accentColor} hovered={hovered}>
+      <CardInner hovered={hovered}>
         {children}
       </CardInner>
     </div>
@@ -122,10 +109,6 @@ export function CapabilitiesSection() {
       {/* Atmospheric background */}
       <div aria-hidden className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(240,237,232,0.025) 0%, transparent 60%)" }} />
-      <div aria-hidden className="pointer-events-none absolute -top-60 -left-60 h-[600px] w-[600px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(251,191,36,0.025) 0%, transparent 60%)" }} />
-      <div aria-hidden className="pointer-events-none absolute -bottom-60 -right-60 h-[600px] w-[600px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(96,165,250,0.025) 0%, transparent 60%)" }} />
 
       <div className="relative mx-auto max-w-[1200px]">
 
@@ -156,16 +139,16 @@ export function CapabilitiesSection() {
 
           {/* ── AI — wide (2 col) ──────────────────────────────── */}
           <StaggerItem className="md:col-span-2">
-            <BentoCard accentColor={A.ai.color}>
+            <BentoCard>
               <div className="flex items-start justify-between">
-                <Tag icon={Bot} label="AI & Agentic Automation" accent={A.ai} />
+                <Tag icon={Bot} label="AI & Agentic Automation" />
                 <Ordinal n="01" />
               </div>
               <p className="text-[16px] leading-[1.6] max-w-md" style={{ color: D.body }}>
                 Autonomous agents that eliminate repetitive workflows, surface insights,
                 and scale your operations — without scaling headcount.
               </p>
-              <Bullets accent={A.ai} items={[
+              <Bullets items={[
                 "Custom LLM pipeline development",
                 "Multi-agent orchestration systems",
                 "Workflow automation & API chaining",
@@ -176,17 +159,17 @@ export function CapabilitiesSection() {
 
           {/* ── Security — narrow (1 col) ──────────────────────── */}
           <StaggerItem>
-            <BentoCard accentColor={A.security.color}>
+            <BentoCard>
               <div className="flex-1">
                 <div className="flex items-start justify-between">
-                  <Tag icon={Shield} label="Zero Trust Security" accent={A.security} />
+                  <Tag icon={Shield} label="Zero Trust Security" />
                   <Ordinal n="02" />
                 </div>
                 <p className="text-[14px] leading-[1.65]" style={{ color: D.body }}>
                   Security architected from the first line of code. Continuous monitoring,
                   red teaming, and Zero Trust by default.
                 </p>
-                <Bullets accent={A.security} items={[
+                <Bullets items={[
                   "Zero Trust architecture design",
                   "Penetration testing & red teaming",
                   "Continuous vulnerability monitoring",
@@ -198,17 +181,17 @@ export function CapabilitiesSection() {
 
           {/* ── Dev — narrow (1 col) ──────────────────────────── */}
           <StaggerItem>
-            <BentoCard accentColor={A.dev.color}>
+            <BentoCard>
               <div className="flex-1">
                 <div className="flex items-start justify-between">
-                  <Tag icon={Code2} label="Custom Development" accent={A.dev} />
+                  <Tag icon={Code2} label="Custom Development" />
                   <Ordinal n="03" />
                 </div>
                 <p className="text-[14px] leading-[1.65]" style={{ color: D.body }}>
                   Bespoke applications built to exact specs — measured in milliseconds,
                   Lighthouse scores, and uptime.
                 </p>
-                <Bullets accent={A.dev} items={[
+                <Bullets items={[
                   "Full stack web & mobile apps",
                   "API design & microservices",
                   "CI/CD pipelines & DevOps",
@@ -220,16 +203,16 @@ export function CapabilitiesSection() {
 
           {/* ── GEO — wide (2 col) ────────────────────────────── */}
           <StaggerItem className="md:col-span-2">
-            <BentoCard accentColor={A.geo.color}>
+            <BentoCard>
               <div className="flex items-start justify-between">
-                <Tag icon={TrendingUp} label="GEO + Digital Marketing" accent={A.geo} />
+                <Tag icon={TrendingUp} label="GEO + Digital Marketing" />
                 <Ordinal n="04" />
               </div>
               <p className="text-[16px] leading-[1.6] max-w-md" style={{ color: D.body }}>
                 Visible to Google and AI engines alike. GEO-optimized from day one —
                 your brand surfaces wherever your customers are asking.
               </p>
-              <Bullets accent={A.geo} items={[
+              <Bullets items={[
                 "Generative Engine Optimization (GEO)",
                 "AI-assisted content strategy",
                 "Performance analytics & attribution",

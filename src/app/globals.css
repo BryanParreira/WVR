@@ -430,3 +430,12 @@ code, pre, kbd, samp {
 .animate-move {
   animation: move 2s linear infinite;
 }
+
+/* ─── Card hover shadow (works in server components — no JS needed) ──── */
+.card-hover {
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
+}

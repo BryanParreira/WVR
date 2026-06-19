@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { NAV_ITEMS, SITE_CONFIG } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import { TextRoll } from "@/components/ui/text-roll"
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -105,48 +106,64 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile full-screen menu overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="md:hidden border-t border-hairline bg-canvas overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="fixed inset-0 top-16 z-40 flex flex-col bg-canvas md:hidden"
           >
-            <nav className="flex flex-col px-4 py-3 gap-0.5" aria-label="Mobile navigation">
+            <nav
+              className="flex flex-1 flex-col justify-center gap-1 px-8"
+              aria-label="Mobile navigation"
+            >
               {NAV_ITEMS.map((item, i) => (
                 <motion.div
                   key={item.href}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 }}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ delay: i * 0.055, ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
                 >
                   <Link
                     href={item.href}
+                    onClick={() => setMobileOpen(false)}
                     className={cn(
-                      "block px-3.5 py-2.5 rounded-[6px] text-[14px] font-medium transition-colors",
-                      pathname === item.href
-                        ? "text-ink bg-surface-strong"
-                        : "text-body hover:text-ink hover:bg-surface-strong"
+                      "flex items-baseline gap-3 py-1 transition-colors duration-150",
+                      pathname === item.href ? "text-ink" : "text-muted hover:text-ink"
                     )}
                   >
-                    {item.label}
+                    <span
+                      className="w-6 shrink-0 text-right text-[11px] tabular-nums opacity-40"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      [{String(i).padStart(1, "0")}]
+                    </span>
+                    <TextRoll center className="text-[clamp(2rem,10vw,3.5rem)] font-extrabold uppercase tracking-[-0.03em]">
+                      {item.label}
+                    </TextRoll>
                   </Link>
                 </motion.div>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: NAV_ITEMS.length * 0.04 }}
-                className="pt-2 pb-1"
-              >
-                <Button asChild variant="ink" className="w-full">
-                  <Link href="/contact">Get Started</Link>
-                </Button>
-              </motion.div>
             </nav>
+
+            {/* Bottom CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: NAV_ITEMS.length * 0.055 + 0.05, duration: 0.35 }}
+              className="border-t border-hairline px-8 pb-10 pt-6"
+            >
+              <Button asChild variant="ink" className="w-full">
+                <Link href="/contact" onClick={() => setMobileOpen(false)}>
+                  Get Started
+                </Link>
+              </Button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
