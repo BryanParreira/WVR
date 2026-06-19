@@ -184,7 +184,7 @@ export function Hero() {
       {/* Crowd canvas — overlaps stats strip; peeps emerge from beneath hero */}
       <div
         aria-hidden
-        className="relative -mx-6 -mt-16 h-[200px] sm:h-[260px] overflow-hidden"
+        className="relative -mx-6 -mt-16 h-[260px] sm:h-[320px] overflow-hidden"
         style={{ zIndex: 1 }}
       >
         {/* Top fade: blends the overlap area so peeps appear to walk behind */}
