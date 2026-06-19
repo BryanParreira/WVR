@@ -74,8 +74,15 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
 
     const resetPeep = ({ peep }: { peep: Peep }) => {
       const direction = Math.random() > 0.5 ? 1 : -1;
-      const offsetY   = 100 - 250 * gsap.parseEase("power2.in")(Math.random());
-      const startY    = stage.height - peep.height + offsetY;
+
+      // depth 0 = far back (top, small), 1 = front (bottom, large)
+      const depth = Math.random();
+      const scale = 0.20 + 0.80 * depth;
+      peep.height = peep.rect[3] * scale;
+      peep.width  = peep.rect[2] * scale;
+
+      // feet land at proportional Y so crowd fills full canvas height
+      const startY = depth * (stage.height - peep.height);
       let startX: number, endX: number;
 
       if (direction === 1) {
@@ -87,20 +94,22 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
       peep.x = startX;
       peep.y = startY;
       peep.anchorY = startY;
-      return { startX, startY, endX };
+      return { startX, startY, endX, depth };
     };
 
     const addPeepToCrowd = () => {
       const peep = removeRandomFromArray(availablePeeps) as Peep;
       const props = resetPeep({ peep });
-      const { startY, endX } = props;
+      const { startY, endX, depth } = props;
       const xDuration = 10;
       const yDuration = 0.25;
+      const bobAmount = 3 + 7 * depth; // front peeps bob more
 
       const tl = gsap.timeline();
-      tl.timeScale(randomRange(0.5, 1.5));
+      // front peeps walk faster, back peeps slower — parallax feel
+      tl.timeScale(0.4 + 1.1 * depth);
       tl.to(peep, { duration: xDuration, x: endX, ease: "none" }, 0);
-      tl.to(peep, { duration: yDuration, repeat: xDuration / yDuration, yoyo: true, y: startY - 10 }, 0);
+      tl.to(peep, { duration: yDuration, repeat: xDuration / yDuration, yoyo: true, y: startY - bobAmount }, 0);
       tl.eventCallback("onComplete", () => {
         removeItemFromArray(crowd, peep);
         availablePeeps.push(peep);
