@@ -57,7 +57,7 @@ const nextConfig: NextConfig = {
       // Turbopack runtime reuses the same filename across builds but changes content,
       // which breaks immutable caching. Use short TTL so browsers re-fetch after deploys.
       {
-        source: "/_next/static/chunks/turbopack-:path*",
+        source: "/_next/static/chunks/turbopack-:name(.*)",
         headers: [
           {
             key: "Cache-Control",
