@@ -1,4 +1,5 @@
 "use client";
+// "use no memo" — prevents React Compiler from memoizing refs/effects used by GSAP
 
 import { gsap } from "gsap";
 import React, { useEffect, useRef } from "react";
@@ -30,7 +31,6 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
       removeFromArray(array, array.indexOf(item));
     const removeRandomFromArray = (array: unknown[]) =>
       removeFromArray(array, randomIndex(array));
-    const getRandomFromArray = (array: unknown[]) => array[randomIndex(array) | 0];
 
     type Peep = {
       image: HTMLImageElement;
@@ -117,26 +117,38 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
       if (!canvas) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.save();
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
       crowd.forEach(p => p.render(ctx));
       ctx.restore();
     };
 
+    let started = false;
+
     const resize = () => {
       if (!canvas) return;
-      stage.width = canvas.clientWidth;
-      stage.height = canvas.clientHeight;
-      canvas.width = stage.width * devicePixelRatio;
-      canvas.height = stage.height * devicePixelRatio;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (w === 0 || h === 0) return; // skip until layout is ready
+      const dpr = window.devicePixelRatio || 1;
+      stage.width = w;
+      stage.height = h;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
 
       crowd.forEach(p => p.walk?.kill());
       crowd.length = 0;
       availablePeeps.length = 0;
       availablePeeps.push(...allPeeps);
       while (availablePeeps.length) addPeepToCrowd().walk.progress(Math.random());
+
+      if (!started) {
+        started = true;
+        gsap.ticker.add(render);
+      }
     };
 
     const img = document.createElement("img");
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       const { naturalWidth: w, naturalHeight: h } = img;
       const total = config.rows * config.cols;
@@ -152,16 +164,29 @@ const CrowdCanvas = ({ src, rows = 15, cols = 7, className, excludeIndices }: Cr
       }
 
       resize();
-      gsap.ticker.add(render);
+    };
+    img.onerror = () => {
+      // Try without crossOrigin if CORS fails (same-origin images)
+      img.crossOrigin = "";
+      img.src = config.src;
     };
     img.src = config.src;
 
+    // ResizeObserver catches both initial layout paint and future resizes
+    const ro = new ResizeObserver(() => {
+      if (allPeeps.length > 0) resize();
+    });
+    ro.observe(canvas);
+
     window.addEventListener("resize", resize);
+
     return () => {
       window.removeEventListener("resize", resize);
+      ro.disconnect();
       gsap.ticker.remove(render);
       crowd.forEach(p => p.walk?.kill());
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src, rows, cols]);
 
   return (
