@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SITE_CONFIG } from "@/lib/constants"
 import { FooterWvr } from "@/components/layout/footer-wvr"
+import { CrowdCanvas } from "@/components/ui/crowd-canvas"
 
 const footerLinks = {
   Services: [
@@ -113,6 +114,23 @@ export function Footer() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Crowd strip */}
+      <div aria-hidden className="relative h-[280px] sm:h-[340px] overflow-hidden">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
+          style={{ background: "linear-gradient(to right, var(--canvas), transparent)" }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
+          style={{ background: "linear-gradient(to left, var(--canvas), transparent)" }} />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20"
+          style={{ background: "linear-gradient(to bottom, var(--canvas), transparent)" }} />
+        <CrowdCanvas
+          src="/images/peeps/all-peeps.png"
+          rows={15}
+          cols={7}
+          excludeIndices={[17, 72, 92, 100]}
+          className="absolute bottom-0 left-0 h-full w-full"
+        />
       </div>
 
       {/* Bottom bar */}

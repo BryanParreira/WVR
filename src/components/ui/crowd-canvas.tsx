@@ -1,5 +1,5 @@
 "use client";
-// "use no memo" — prevents React Compiler from memoizing refs/effects used by GSAP
+"use no memo";
 
 import { gsap } from "gsap";
 import React, { useEffect, useRef } from "react";

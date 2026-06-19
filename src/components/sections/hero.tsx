@@ -7,7 +7,6 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AgentCard } from "@/components/sections/agent-card"
 import { FlipWords } from "@/components/ui/flip-words"
-import { CrowdCanvas } from "@/components/ui/crowd-canvas"
 
 function AnimatedNumber({ value }: { value: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -180,20 +179,6 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Crowd strip — below stats, peeps anchored to bottom */}
-      <div aria-hidden className="relative -mx-6 h-[340px] sm:h-[380px] overflow-hidden">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
-          style={{ background: "linear-gradient(to right, var(--canvas), transparent)" }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
-          style={{ background: "linear-gradient(to left, var(--canvas), transparent)" }} />
-        <CrowdCanvas
-          src="/images/peeps/all-peeps.png"
-          rows={15}
-          cols={7}
-          excludeIndices={[17, 72, 92, 100]}
-          className="absolute bottom-0 left-0 h-full w-full"
-        />
-      </div>
     </section>
   )
 }

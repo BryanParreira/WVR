@@ -1,6 +1,8 @@
 "use client"
+"use no memo";
 
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState } from "react"
+import { flushSync } from "react-dom"
 import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -12,16 +14,10 @@ const TRANSITION_CSS = `
   }
   ::view-transition-new(root) {
     animation-name: wvr-reveal;
-    filter: blur(2px);
   }
-  ::view-transition-old(root),
-  .dark::view-transition-old(root) {
+  ::view-transition-old(root) {
     animation: none;
     z-index: -1;
-  }
-  .dark::view-transition-new(root) {
-    animation-name: wvr-reveal;
-    filter: blur(2px);
   }
   @keyframes wvr-reveal {
     from {
@@ -53,16 +49,15 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   useEffect(() => setMounted(true), [])
 
-  const toggle = useCallback(() => {
+  function toggle() {
     const next = resolvedTheme === "dark" ? "light" : "dark"
-    if (typeof document === "undefined") return
     injectStyles()
-    if (!document.startViewTransition) {
+    if (typeof document === "undefined" || !document.startViewTransition) {
       setTheme(next)
       return
     }
-    document.startViewTransition(() => setTheme(next))
-  }, [resolvedTheme, setTheme])
+    document.startViewTransition(() => flushSync(() => setTheme(next)))
+  }
 
   if (!mounted) {
     return (
