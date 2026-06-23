@@ -6,8 +6,3 @@ AddType font/woff2 .woff2
 AddType font/woff .woff
 
 Options -MultiViews
-RewriteEngine On
-
-# Proxy all requests to Next.js (next start runs on port 3000 by default)
-# If Hostinger assigned a different port, update 3000 below
-RewriteRule ^(.*)$ http://localhost:3000/$1 [P,L]
