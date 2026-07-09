@@ -33,9 +33,8 @@ export function OrganizationJsonLd() {
     areaServed: "Worldwide",
     email: "support@webvisionrank.com",
     sameAs: [
-      "https://twitter.com/webvisionrank",
-      "https://linkedin.com/company/webvisionrank",
-      "https://github.com/webvisionrank",
+      "https://www.facebook.com/profile.php?id=61576118574498",
+      "https://www.instagram.com/webvisionrank/",
     ],
     contactPoint: {
       "@type": "ContactPoint",

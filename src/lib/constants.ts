@@ -218,8 +218,7 @@ export const SITE_CONFIG = {
   url: "https://webvisionrank.com",
   email: "support@webvisionrank.com",
   social: {
-    twitter: "https://twitter.com/webvisionrank",
-    linkedin: "https://linkedin.com/company/webvisionrank",
-    github: "https://github.com/webvisionrank",
+    facebook: "https://www.facebook.com/profile.php?id=61576118574498",
+    instagram: "https://www.instagram.com/webvisionrank/",
   },
 }
