@@ -262,7 +262,7 @@ export function PricingFaqJsonLd() {
             name: "What does WebVisionRank charge for AI automation?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "WebVisionRank's AI automation is available from $2,500 in the Growth plan. The Enterprise plan starts at $5,000+ for full-scope custom AI agent development.",
+              text: "WebVisionRank's AI automation is available from $2,500/mo in the Growth plan. The Ecosystem plan starts at $5,000+/mo for full-scope custom AI agent development, and Enterprise engagements are custom-quoted.",
             },
           },
           {
@@ -270,7 +270,7 @@ export function PricingFaqJsonLd() {
             name: "Are these one-time project fees or recurring?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Project-based fees. Ongoing support and maintenance can be added as a monthly retainer — pricing depends on scope.",
+              text: "Monthly plans. Each tier is billed per month, with Enterprise engagements custom-quoted based on scope.",
             },
           },
           {
@@ -286,7 +286,7 @@ export function PricingFaqJsonLd() {
             name: "What does the project timeline look like?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Enterprise builds are scoped individually during discovery.",
+              text: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem and Enterprise builds are scoped individually during discovery.",
             },
           },
           {
@@ -294,7 +294,7 @@ export function PricingFaqJsonLd() {
             name: "Do you work with startups or only established businesses?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Enterprise tier is for organizations ready to go all-in.",
+              text: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem and Enterprise tiers are for organizations ready to go all-in.",
             },
           },
           {
@@ -318,7 +318,7 @@ export function PricingFaqJsonLd() {
             name: "How much does AI agent development cost?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Custom AI agent development is included in the Enterprise plan starting at $5,000. This includes multi-agent orchestration, LLM pipeline development, and workflow automation tailored to your business processes.",
+              text: "Custom AI agent development is included in the Ecosystem plan starting at $5,000/mo. This includes multi-agent orchestration, LLM pipeline development, and workflow automation tailored to your business processes.",
             },
           },
           {
@@ -326,7 +326,7 @@ export function PricingFaqJsonLd() {
             name: "Does WebVisionRank offer cybersecurity services?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. WebVisionRank provides Zero Trust security architecture, penetration testing, continuous vulnerability monitoring, and security audits. The Enterprise plan includes Zero Trust architecture as standard.",
+              text: "Yes. WebVisionRank provides Zero Trust security architecture, penetration testing, continuous vulnerability monitoring, and security audits. The Ecosystem plan includes Zero Trust architecture as standard.",
             },
           },
         ],
@@ -343,7 +343,7 @@ export function PricingFaqJsonLd() {
             item: {
               "@type": "Product",
               name: "Foundation Plan — WebVisionRank",
-              description: "Essential digital infrastructure: high-performance website, basic SEO & GEO, security hardening, and 1 month of support.",
+              description: "Essential digital infrastructure: high-performance website, basic SEO & GEO, security hardening, and ongoing post-launch support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -363,7 +363,7 @@ export function PricingFaqJsonLd() {
             item: {
               "@type": "Product",
               name: "Growth Plan — WebVisionRank",
-              description: "AI-powered marketing and automation: everything in Foundation plus AI content pipeline, advanced GEO, CRM integration, and 3 months of priority support.",
+              description: "AI-powered marketing and automation: everything in Foundation plus AI content pipeline, advanced GEO, CRM integration, and priority support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -382,8 +382,8 @@ export function PricingFaqJsonLd() {
             position: 3,
             item: {
               "@type": "Product",
-              name: "Enterprise Plan — WebVisionRank",
-              description: "Full-stack digital transformation: custom AI agents, Zero Trust security architecture, bespoke software, and 12-month retainer support.",
+              name: "Ecosystem Plan — WebVisionRank",
+              description: "Full-stack digital transformation: custom AI agents, Zero Trust security architecture, bespoke software, and dedicated retainer support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -392,7 +392,29 @@ export function PricingFaqJsonLd() {
                   "@type": "PriceSpecification",
                   minPrice: "5000",
                   priceCurrency: "USD",
-                  description: "Custom scope — starting at $5,000",
+                  description: "Custom scope — starting at $5,000/mo",
+                },
+                availability: "https://schema.org/InStock",
+                seller: { "@id": `${BASE}/#organization` },
+                url: `${BASE}/contact?plan=ecosystem`,
+              },
+            },
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            item: {
+              "@type": "Product",
+              name: "Enterprise Plan — WebVisionRank",
+              description: "Tailored engagements for organizations needing scale, compliance, or infrastructure beyond standard tiers: dedicated account team, custom SLAs, and multi-year contract options.",
+              url: `${BASE}/pricing`,
+              brand: { "@id": `${BASE}/#organization` },
+              offers: {
+                "@type": "Offer",
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "USD",
+                  description: "Custom quote based on scope",
                 },
                 availability: "https://schema.org/InStock",
                 seller: { "@id": `${BASE}/#organization` },

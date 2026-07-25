@@ -104,12 +104,12 @@ export const PRICING_TIERS: PricingTier[] = [
     description:
       "Essential digital infrastructure for businesses ready to compete online with speed and security.",
     features: [
-      "High performance website (up to 10 pages)",
+      "High-performance website (up to 10 pages)",
       "Basic SEO & GEO optimization",
       "Security hardening & SSL",
       "Contact form with spam protection",
-      "Google Analytics integration",
-      "1 month post-launch support",
+      "Google Analytics integration & monthly reporting",
+      "Ongoing post-launch support",
     ],
     cta: "Get Started",
   },
@@ -125,15 +125,15 @@ export const PRICING_TIERS: PricingTier[] = [
       "Advanced GEO & semantic SEO",
       "CRM integration & lead routing",
       "Custom dashboard & reporting",
-      "3 months priority support",
+      "Priority support",
       "Monthly strategy calls",
     ],
     cta: "Scale With AI",
     highlighted: true,
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
+    id: "ecosystem",
+    name: "Ecosystem",
     price: "5,000+",
     description:
       "Full stack digital transformation — custom AI agents, Zero Trust security, and bespoke software.",
@@ -144,9 +144,25 @@ export const PRICING_TIERS: PricingTier[] = [
       "Bespoke software/SaaS build",
       "Dedicated Slack channel",
       "Quarterly security audits",
-      "12 months retainer support",
+      "Dedicated retainer support",
     ],
-    cta: "Talk to Sales",
+    cta: "Build Your Ecosystem",
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: "Custom Quote",
+    description:
+      "Tailored engagements for organizations that need scale, compliance, or infrastructure beyond our standard tiers.",
+    features: [
+      "Everything in Ecosystem",
+      "Dedicated account team & engineering pod",
+      "Custom SLAs & compliance support",
+      "Multi-year contract options",
+      "On-prem / custom infrastructure integrations",
+      "Quarterly business reviews with leadership",
+    ],
+    cta: "Request a Quote",
   },
 ]
 
