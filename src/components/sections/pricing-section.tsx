@@ -51,7 +51,7 @@ function TierCardContent({ tier }: { tier: Tier }) {
             ${typeof tier.price === "number" ? tier.price.toLocaleString() : tier.price}
           </span>
           <span className={tier.highlighted ? "text-[#807d72] text-[14px]" : "text-muted text-[14px]"}>
-            /project
+            {tier.id === "enterprise" ? "/project" : "/month"}
           </span>
         </div>
 

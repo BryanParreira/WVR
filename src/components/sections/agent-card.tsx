@@ -287,7 +287,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  Growth       $7,500/project" },
     { text: "  ↳ AI automation + full marketing stack" },
     { text: "" },
-    { text: "  Ecosystem    Custom" },
+    { text: "  Enterprise   Custom" },
     { text: "  ↳ Full-scope AI + security + custom dev" },
     { text: "" },
     { text: "  → webvisionrank.com/pricing", color: D.muted },

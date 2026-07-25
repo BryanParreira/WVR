@@ -132,8 +132,8 @@ export const PRICING_TIERS: PricingTier[] = [
     highlighted: true,
   },
   {
-    id: "ecosystem",
-    name: "Ecosystem",
+    id: "enterprise",
+    name: "Enterprise",
     price: "5,000+",
     description:
       "Full stack digital transformation — custom AI agents, Zero Trust security, and bespoke software.",
@@ -146,7 +146,7 @@ export const PRICING_TIERS: PricingTier[] = [
       "Quarterly security audits",
       "12 months retainer support",
     ],
-    cta: "Build Your Ecosystem",
+    cta: "Talk to Sales",
   },
 ]
 

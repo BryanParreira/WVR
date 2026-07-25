@@ -262,7 +262,7 @@ export function PricingFaqJsonLd() {
             name: "What does WebVisionRank charge for AI automation?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "WebVisionRank's AI automation is available from $2,500 in the Growth plan. The Ecosystem plan starts at $5,000+ for full-scope custom AI agent development.",
+              text: "WebVisionRank's AI automation is available from $2,500 in the Growth plan. The Enterprise plan starts at $5,000+ for full-scope custom AI agent development.",
             },
           },
           {
@@ -286,7 +286,7 @@ export function PricingFaqJsonLd() {
             name: "What does the project timeline look like?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem builds are scoped individually during discovery.",
+              text: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Enterprise builds are scoped individually during discovery.",
             },
           },
           {
@@ -294,7 +294,7 @@ export function PricingFaqJsonLd() {
             name: "Do you work with startups or only established businesses?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem tier is for organizations ready to go all-in.",
+              text: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Enterprise tier is for organizations ready to go all-in.",
             },
           },
           {
@@ -318,7 +318,7 @@ export function PricingFaqJsonLd() {
             name: "How much does AI agent development cost?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Custom AI agent development is included in the Ecosystem plan starting at $5,000. This includes multi-agent orchestration, LLM pipeline development, and workflow automation tailored to your business processes.",
+              text: "Custom AI agent development is included in the Enterprise plan starting at $5,000. This includes multi-agent orchestration, LLM pipeline development, and workflow automation tailored to your business processes.",
             },
           },
           {
@@ -326,7 +326,7 @@ export function PricingFaqJsonLd() {
             name: "Does WebVisionRank offer cybersecurity services?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. WebVisionRank provides Zero Trust security architecture, penetration testing, continuous vulnerability monitoring, and security audits. The Ecosystem plan includes Zero Trust architecture as standard.",
+              text: "Yes. WebVisionRank provides Zero Trust security architecture, penetration testing, continuous vulnerability monitoring, and security audits. The Enterprise plan includes Zero Trust architecture as standard.",
             },
           },
         ],
@@ -382,7 +382,7 @@ export function PricingFaqJsonLd() {
             position: 3,
             item: {
               "@type": "Product",
-              name: "Ecosystem Plan — WebVisionRank",
+              name: "Enterprise Plan — WebVisionRank",
               description: "Full-stack digital transformation: custom AI agents, Zero Trust security architecture, bespoke software, and 12-month retainer support.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
@@ -396,7 +396,7 @@ export function PricingFaqJsonLd() {
                 },
                 availability: "https://schema.org/InStock",
                 seller: { "@id": `${BASE}/#organization` },
-                url: `${BASE}/contact?plan=ecosystem`,
+                url: `${BASE}/contact?plan=enterprise`,
               },
             },
           },

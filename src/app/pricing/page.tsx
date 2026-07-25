@@ -42,11 +42,11 @@ const faqs = [
   },
   {
     q: "What does the project timeline look like?",
-    a: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem builds are scoped individually during discovery.",
+    a: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Enterprise builds are scoped individually during discovery.",
   },
   {
     q: "Do you work with startups or only established businesses?",
-    a: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem tier is for organizations ready to go all-in.",
+    a: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Enterprise tier is for organizations ready to go all-in.",
   },
 ]
 

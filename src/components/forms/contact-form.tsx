@@ -36,13 +36,13 @@ const serviceOptions = [
 const planToService: Record<string, ContactFormData["service"]> = {
   foundation: "web-development",
   growth:     "ai-automation",
-  ecosystem:  "other",
+  enterprise: "other",
 }
 
 const planLabels: Record<string, string> = {
   foundation: "Foundation plan",
   growth:     "Growth plan",
-  ecosystem:  "Ecosystem plan",
+  enterprise: "Enterprise plan",
 }
 
 function useFormContext(): { service?: ContactFormData["service"]; planLabel?: string } {
