@@ -1,6 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useTheme } from "next-themes"
 import { useSearchParams } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -80,6 +81,11 @@ export function ContactForm() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const captchaRef = useRef<HCaptcha>(null)
   const { service: preselected, planLabel } = useFormContext()
+
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const captchaTheme = mounted && resolvedTheme === "dark" ? "dark" : "light"
 
   const {
     register,
@@ -298,11 +304,16 @@ export function ContactForm() {
 
       {/* Captcha — only renders when site key is configured */}
       {HCAPTCHA_SITE_KEY && (
-        <div>
+        <div
+          className="flex justify-center rounded-[8px] p-3"
+          style={{ background: D.bg, border: `1px solid ${D.border}` }}
+        >
           <HCaptcha
+            key={captchaTheme}
             ref={captchaRef}
             sitekey={HCAPTCHA_SITE_KEY}
-            theme="dark"
+            theme={captchaTheme}
+            size="normal"
             onVerify={(token) => setCaptchaToken(token)}
             onExpire={() => setCaptchaToken(null)}
           />
