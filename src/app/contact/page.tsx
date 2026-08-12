@@ -107,8 +107,6 @@ export default function ContactPage() {
             backgroundSize: "28px 28px",
             opacity: 0.35,
           }} />
-        <div aria-hidden className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 90% 70% at 50% 50%, transparent 40%, rgba(14,13,11,0.9) 100%)" }} />
 
         <div className="relative mx-auto max-w-[1200px]">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-5 items-start">

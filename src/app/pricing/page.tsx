@@ -10,7 +10,7 @@ import { EncryptedText } from "@/components/ui/encrypted-text"
 export const metadata: Metadata = {
   title: "Pricing — AI, Cybersecurity & Web Development Plans",
   description:
-    "Transparent, project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500. No hidden fees.",
+    "Transparent, monthly pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500/mo. No hidden fees.",
   keywords: [
     "AI agency pricing",
     "cybersecurity pricing",
@@ -22,19 +22,19 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://webvisionrank.com/pricing" },
   openGraph: {
     title: "Pricing — WebVisionRank",
-    description: "Project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500.",
+    description: "Monthly pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500/mo.",
     url: "https://webvisionrank.com/pricing",
   },
   twitter: {
     title: "Pricing — WebVisionRank",
-    description: "Project based pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500.",
+    description: "Monthly pricing for AI automation, cybersecurity, and custom development. Foundation from $1,500/mo.",
   },
 }
 
 const faqs = [
   {
     q: "Are these one time project fees or recurring?",
-    a: "Project based fees. Ongoing support and maintenance can be added as a monthly retainer — pricing depends on scope.",
+    a: "Monthly plans. Each tier is billed per month, with Enterprise engagements custom-quoted based on scope.",
   },
   {
     q: "Can I start with one service and add more later?",
@@ -42,11 +42,11 @@ const faqs = [
   },
   {
     q: "What does the project timeline look like?",
-    a: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem builds are scoped individually during discovery.",
+    a: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem and Enterprise builds are scoped individually during discovery.",
   },
   {
     q: "Do you work with startups or only established businesses?",
-    a: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem tier is for organizations ready to go all-in.",
+    a: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem and Enterprise tiers are for organizations ready to go all-in.",
   },
 ]
 

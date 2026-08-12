@@ -305,7 +305,7 @@ export function PricingFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] })
             item: {
               "@type": "Product",
               name: "Foundation Plan — WebVisionRank",
-              description: "Essential digital infrastructure: high-performance website, basic SEO & GEO, security hardening, and 1 month of support.",
+              description: "Essential digital infrastructure: high-performance website, basic SEO & GEO, security hardening, and ongoing post-launch support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -325,7 +325,7 @@ export function PricingFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] })
             item: {
               "@type": "Product",
               name: "Growth Plan — WebVisionRank",
-              description: "AI-powered marketing and automation: everything in Foundation plus AI content pipeline, advanced GEO, CRM integration, and 3 months of priority support.",
+              description: "AI-powered marketing and automation: everything in Foundation plus AI content pipeline, advanced GEO, CRM integration, and priority support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -345,7 +345,7 @@ export function PricingFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] })
             item: {
               "@type": "Product",
               name: "Ecosystem Plan — WebVisionRank",
-              description: "Full-stack digital transformation: custom AI agents, Zero Trust security architecture, bespoke software, and 12-month retainer support.",
+              description: "Full-stack digital transformation: custom AI agents, Zero Trust security architecture, bespoke software, and dedicated retainer support. Billed monthly.",
               url: `${BASE}/pricing`,
               brand: { "@id": `${BASE}/#organization` },
               offers: {
@@ -354,11 +354,33 @@ export function PricingFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] })
                   "@type": "PriceSpecification",
                   minPrice: "5000",
                   priceCurrency: "USD",
-                  description: "Custom scope — starting at $5,000",
+                  description: "Custom scope — starting at $5,000/mo",
                 },
                 availability: "https://schema.org/InStock",
                 seller: { "@id": `${BASE}/#organization` },
                 url: `${BASE}/contact?plan=ecosystem`,
+              },
+            },
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            item: {
+              "@type": "Product",
+              name: "Enterprise Plan — WebVisionRank",
+              description: "Tailored engagements for organizations needing scale, compliance, or infrastructure beyond standard tiers: dedicated account team, custom SLAs, and multi-year contract options.",
+              url: `${BASE}/pricing`,
+              brand: { "@id": `${BASE}/#organization` },
+              offers: {
+                "@type": "Offer",
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "USD",
+                  description: "Custom quote based on scope",
+                },
+                availability: "https://schema.org/InStock",
+                seller: { "@id": `${BASE}/#organization` },
+                url: `${BASE}/contact?plan=enterprise`,
               },
             },
           },

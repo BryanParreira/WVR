@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono, Source_Code_Pro } from "next/font/google"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { OrganizationJsonLd, WebSiteJsonLd, LocalBusinessJsonLd } from "@/components/seo/json-ld"
 import { ScrollProgressBar } from "@/components/ui/scroll-progress"
+import { Navbar } from "@/components/layout/navbar"
+import { Footer } from "@/components/layout/footer"
 import { SITE_CONFIG } from "@/lib/constants"
 import "./globals.css"
 
@@ -115,7 +117,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem={false}
           disableTransitionOnChange={false}
         >
+          <Navbar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

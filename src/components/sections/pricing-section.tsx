@@ -27,11 +27,15 @@ function TierCardContent({ tier }: { tier: Tier }) {
             "text-[36px] font-semibold leading-none tracking-[-0.02em]",
             tier.highlighted ? "text-canvas" : "text-ink"
           )}>
-            ${typeof tier.price === "number" ? tier.price.toLocaleString() : tier.price}
+            {tier.price === "Custom Quote"
+              ? tier.price
+              : `$${typeof tier.price === "number" ? tier.price.toLocaleString() : tier.price}`}
           </span>
-          <span className={tier.highlighted ? "text-[#807d72] text-[14px]" : "text-muted text-[14px]"}>
-            /project
-          </span>
+          {tier.price !== "Custom Quote" && (
+            <span className={tier.highlighted ? "text-[#807d72] text-[14px]" : "text-muted text-[14px]"}>
+              /mo
+            </span>
+          )}
         </div>
 
         <p className={cn("text-[14px] leading-[1.5] mt-3", tier.highlighted ? "text-[#a09c92]" : "text-body")}>
@@ -80,7 +84,7 @@ export function PricingSection() {
           </p>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-1 gap-4 lg:grid-cols-3 items-start">
+        <StaggerContainer className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 items-start">
           {PRICING_TIERS.map((tier) =>
             tier.highlighted ? (
               /* ── Highlighted card: rotating gradient border ── */
@@ -142,16 +146,6 @@ export function PricingSection() {
             )
           )}
         </StaggerContainer>
-
-        {/* Enterprise footnote */}
-        <AnimateIn className="mt-8" delay={0.1}>
-          <p className="text-[14px] text-muted">
-            Need something custom?{" "}
-            <Link href="/contact" className="text-ink underline underline-offset-4 hover:text-body transition-colors">
-              Talk to us about enterprise solutions →
-            </Link>
-          </p>
-        </AnimateIn>
       </div>
     </section>
   )
