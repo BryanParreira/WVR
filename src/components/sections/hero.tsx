@@ -81,8 +81,8 @@ export function Hero() {
 
         {/* Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-          animate={{ opacity: 1,  y: 0,  filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1,  y: 0 }}
           transition={{ duration: 0.65, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
           className="display-mega max-w-3xl mb-6">
           Build the Future.
@@ -95,8 +95,8 @@ export function Hero() {
 
         {/* Sub */}
         <motion.p
-          initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
-          animate={{ opacity: 1,  y: 0,  filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1,  y: 0 }}
           transition={{ duration: 0.55, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
           className="text-[16px] text-body leading-[1.5] max-w-xl mb-9">
           WebVisionRank leads with Agentic AI automation and Zero Trust cybersecurity —
@@ -133,8 +133,8 @@ export function Hero() {
 
         {/* Terminal card — BorderBeam wrapper */}
         <motion.div
-          initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
-          animate={{ opacity: 1,  y: 0,  filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1,  y: 0 }}
           transition={{ duration: 0.7, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}>
 
           {/* Glow halo behind terminal */}

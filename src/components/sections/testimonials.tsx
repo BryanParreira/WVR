@@ -122,9 +122,9 @@ export function Testimonials() {
           <motion.div
             key={active}
             custom={dir}
-            initial={{ opacity: 0, x: dir * 50, filter: "blur(4px)" }}
-            animate={{ opacity: 1,  x: 0,        filter: "blur(0px)" }}
-            exit={{    opacity: 0,  x: dir * -50, filter: "blur(4px)" }}
+            initial={{ opacity: 0, x: dir * 50 }}
+            animate={{ opacity: 1,  x: 0 }}
+            exit={{    opacity: 0,  x: dir * -50 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* GlowingEffect wrapper */}
