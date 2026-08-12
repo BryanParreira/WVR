@@ -55,6 +55,44 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Posting cadence", value: "0 → 2×/week" },
     ],
   },
+  {
+    slug: "tienda-guerrero",
+    client: "Tienda Guerrero",
+    industry: "Restaurant",
+    summary:
+      "Tienda Guerrero, a Mexican restaurant, needed an online restaurant website — a real menu and ordering presence, not just a digital business card.",
+    challenge:
+      "Before working with us, Tienda Guerrero had no way to take orders online — every order meant a phone call, which meant staff constantly tied up answering the phone instead of running the restaurant.",
+    solution:
+      "We built Tienda Guerrero's online store and restaurant ordering system from the ground up — a real menu and ordering presence, not just a digital business card.",
+    results: [
+      { label: "Ordering", value: "Phone → Online" },
+    ],
+    quote: {
+      content: "It brought in a ton of new orders and freed us up from constantly answering the phone.",
+      name: "Evelyn",
+      role: "Family Member, Tienda Guerrero",
+    },
+  },
+  {
+    slug: "abc-driving-school",
+    client: "ABC Driving School",
+    industry: "Education",
+    summary:
+      "ABC Driving School needed a website that made it simple for parents and students to sign up for driving instruction.",
+    challenge:
+      "ABC Driving School needed a fast, mobile-friendly website that made signing up for classes simple for parents and students.",
+    solution:
+      "We built and optimized ABC Driving School's website from the ground up, with sign-up flow as the core focus.",
+    results: [
+      { label: "Registrations via site", value: "↑ Increase" },
+    ],
+    quote: {
+      content: "We've seen a noticeable bump in new student registrations directly through the site!",
+      name: "Alicia",
+      role: "Co-Owner, ABC Driving School",
+    },
+  },
 ]
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {

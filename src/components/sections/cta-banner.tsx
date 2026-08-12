@@ -16,20 +16,17 @@ export function CtaBanner() {
   return (
     <section className="relative overflow-hidden" style={{ background: "#0a0908" }}>
 
-      {/* Metrics strip — sourced only from verified, case-study-backed results */}
+      {/* Metrics strip — sourced only from verified, case-study-backed results.
+          Flex + divide so it never leaves a dead gap when count < 4. */}
       {metrics.length > 0 && (
         <div className="relative border-b" style={{ borderColor: "rgba(240,237,232,0.06)" }}>
           <div className="mx-auto max-w-[1200px] px-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4">
-              {metrics.map((m, i) => (
+            <div className="flex flex-wrap divide-x" style={{ borderColor: "rgba(240,237,232,0.06)" }}>
+              {metrics.map((m) => (
                 <div
                   key={m.label}
-                  className={[
-                    "py-5 flex flex-col gap-0.5",
-                    i % 2 !== 0                  ? "pl-6 border-l border-[rgba(240,237,232,0.06)]" : "",
-                    i >= 2                       ? "border-t border-[rgba(240,237,232,0.06)] sm:border-t-0" : "",
-                    i > 0 && i % 2 === 0         ? "sm:pl-6 sm:border-l sm:border-[rgba(240,237,232,0.06)]" : "",
-                  ].filter(Boolean).join(" ")}
+                  className="py-5 px-6 first:pl-0 flex flex-col gap-0.5"
+                  style={{ borderColor: "rgba(240,237,232,0.06)" }}
                 >
                   <span
                     className="text-[22px] sm:text-[26px] font-semibold tabular-nums leading-none tracking-[-0.03em]"

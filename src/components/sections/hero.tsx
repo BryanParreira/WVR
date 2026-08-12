@@ -168,12 +168,9 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="mt-12 py-8 border-t border-hairline grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map(({ value, label }, i) => (
-                <div key={label} className={[
-                  i % 2 !== 0 ? "border-l border-hairline pl-8" : "",
-                  i === 2 ? "md:border-l md:border-hairline md:pl-8" : "",
-                ].filter(Boolean).join(" ")}>
+              className="mt-12 py-8 border-t border-hairline flex flex-wrap divide-x divide-hairline">
+              {stats.map(({ value, label }) => (
+                <div key={label} className="pr-8 pl-8 first:pl-0">
                   <AnimatedNumber value={value} />
                   <div className="text-[13px] text-muted">{label}</div>
                 </div>

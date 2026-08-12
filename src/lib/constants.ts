@@ -193,6 +193,24 @@ export const TESTIMONIALS: Testimonial[] = [
       "WebVisionRank made scaling Superior Cleaning so much easier. They dialed in our marketing to bring in a steady stream of new leads, and the automations they built handle most of our client follow-ups automatically. Saves us a ton of admin work every single day!",
     rating: 5,
   },
+  {
+    id: "3",
+    name: "Evelyn",
+    role: "Family Member",
+    company: "Tienda Guerrero",
+    content:
+      "WebVisionRank built our online store and restaurant ordering system for Tienda Guerrero here in Austin, and it's been a total game-changer! Our customers love how easy it is to order food and shop online now. It brought in a ton of new orders and freed us up from constantly answering the phone.",
+    rating: 5,
+  },
+  {
+    id: "4",
+    name: "Alicia",
+    role: "Co-Owner",
+    company: "ABC Driving School",
+    content:
+      "WebVisionRank built and optimized our new website for ABC Driving School, and the results speak for themselves. It's super fast, looks great on phones, and makes it really simple for parents and students to sign up. We've seen a noticeable bump in new student registrations directly through the site!",
+    rating: 5,
+  },
 ]
 
 export const PROCESS_STEPS = [

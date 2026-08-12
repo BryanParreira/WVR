@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const OBJECTIONS = [
   {
     q: "How many clients do you actually have?",
-    a: "Two paying clients right now: Ridgeline Roofing MN and Superior Cleaning Services. That's it — say that number, don't round up. We're also behind a few of our own ventures (Grovic Data, WVRize, Valerium) but those aren't client engagements and shouldn't be pitched as ones. Being small and early is the honest position — lean into the fact that both real clients get founder-level, hands-on attention, not an account manager relaying requests to a junior team.",
+    a: "Four paying clients right now: Ridgeline Roofing MN, Superior Cleaning Services, Tienda Guerrero, and ABC Driving School. Say that number, don't round up. We're also behind a few of our own ventures (Grovic Data, WVRize, Valerium) but those aren't client engagements and shouldn't be pitched as ones. Being small and early is the honest position — lean into the fact that every real client gets founder-level, hands-on attention, not an account manager relaying requests to a junior team.",
   },
   {
     q: "You're a small team — can you actually handle this?",
@@ -57,9 +57,11 @@ export default function ForSalesPage() {
             <div>
               <h3 className="mb-2 text-[15px] font-semibold text-ink">Who we serve</h3>
               <p className="text-[15px] leading-[1.7] text-body">
-                Small and mid-size businesses — currently construction (Ridgeline Roofing MN) and
-                facilities/cleaning (Superior Cleaning Services) — that need an ongoing technical
-                partner covering marketing, automation, and security, not a one-off project vendor.
+                Small and mid-size businesses across construction (Ridgeline Roofing MN),
+                facilities/cleaning (Superior Cleaning Services), restaurants (Tienda Guerrero),
+                and education (ABC Driving School). Some engagements are ongoing partnerships
+                covering marketing, automation, and security; others are focused website builds —
+                match the pitch to which one a prospect actually needs.
               </p>
             </div>
             <div>

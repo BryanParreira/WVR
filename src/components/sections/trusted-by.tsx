@@ -8,6 +8,8 @@ import { EncryptedText } from "@/components/ui/encrypted-text"
 const clients = [
   { name: "Ridgeline Roofing MN", tag: "Construction" },
   { name: "Superior Cleaning",    tag: "Facilities"   },
+  { name: "Tienda Guerrero",      tag: "Restaurant"    },
+  { name: "ABC Driving School",   tag: "Education"     },
 ]
 
 const ventures = [
@@ -73,7 +75,7 @@ export function TrustedBy() {
         </div>
 
         {/* Real client engagements */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-b border-hairline mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-t border-b border-hairline mb-10">
           {clients.map((company, i) => (
             <ClientCell key={company.name} company={company} index={i} />
           ))}
