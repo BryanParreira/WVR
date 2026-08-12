@@ -255,7 +255,7 @@ export function LiveScanBar() {
             transition={{ duration: 0.18 }}
             className="text-[10px] uppercase tracking-[0.10em]"
             style={{ fontFamily: "var(--font-code-stack)", color: allClear ? D.green : D.muted }}>
-            {allClear ? "simulated scan — example clear" : "simulated scan — scanning policies"}
+            {allClear ? "simulated scan: example clear" : "simulated scan: scanning policies"}
           </motion.span>
         </AnimatePresence>
       </div>

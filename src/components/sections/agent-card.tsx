@@ -186,7 +186,7 @@ const CMDS: Record<string, () => Line[]> = {
   ],
 
   uptime: () => [
-    { text: "webvisionrank.com — up since launch.", color: D.ink },
+    { text: "webvisionrank.com: up since launch.", color: D.ink },
     { text: "for real client results, see /case-studies", color: D.muted },
   ],
 

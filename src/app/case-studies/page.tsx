@@ -27,7 +27,7 @@ export default function CaseStudiesPage() {
             Real outcomes.
           </h1>
           <p className="mt-4 max-w-lg text-[16px] leading-[1.5] text-body">
-            Every result here is tied to a named, verifiable client engagement — not an agency-wide claim.
+            Every result here is tied to a named, verifiable client engagement, not an agency-wide claim.
           </p>
         </div>
       </section>

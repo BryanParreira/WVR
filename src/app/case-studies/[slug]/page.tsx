@@ -70,7 +70,7 @@ export default async function CaseStudyPage({ params }: Props) {
                     className="rounded-[10px] border border-dashed px-5 py-4 text-[13px] italic"
                     style={{ borderColor: "var(--hairline-strong)", color: "var(--muted)" }}
                   >
-                    Pending — result not yet supplied.
+                    Pending: result not yet supplied.
                   </div>
                 ) : (
                   <div key={i} className="rounded-[10px] border border-hairline bg-surface px-5 py-4">

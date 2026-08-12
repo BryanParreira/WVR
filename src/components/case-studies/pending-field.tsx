@@ -9,7 +9,7 @@ export function PendingField({ value, className }: { value: string; className?: 
       className={`rounded-[8px] border border-dashed px-4 py-3 text-[13px] italic ${className ?? ""}`}
       style={{ borderColor: "var(--hairline-strong)", color: "var(--muted)" }}
     >
-      Pending — awaiting real details from client engagement.
+      Pending: awaiting real details from client engagement.
     </div>
   )
 }

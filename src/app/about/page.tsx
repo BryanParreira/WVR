@@ -96,7 +96,7 @@ export default function AboutPage() {
             </p>
           </AnimateIn>
           <AnimateIn delay={0.1} className="mt-8 max-w-2xl">
-            <DirectAnswer text="WebVisionRank is a technology agency built around two disciplines — Agentic AI automation and Zero Trust cybersecurity — rather than spreading thin across every service a business might need. Web development, custom software, marketing, and data intelligence round out the offering as complementary capabilities, not competing priorities." />
+            <DirectAnswer text="WebVisionRank is a technology agency built around two disciplines, Agentic AI automation and Zero Trust cybersecurity, rather than spreading thin across every service a business might need. Web development, custom software, marketing, and data intelligence round out the offering as complementary capabilities, not competing priorities." />
           </AnimateIn>
         </div>
       </section>

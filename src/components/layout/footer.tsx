@@ -66,7 +66,7 @@ export function Footer() {
             </Link>
 
             <p className="text-[14px] text-body leading-[1.5] mb-6 max-w-xs">
-              We lead with Agentic AI automation and Zero Trust cybersecurity — backed by
+              We lead with Agentic AI automation and Zero Trust cybersecurity, backed by
               web development, custom software, marketing, and data intelligence.
             </p>
 

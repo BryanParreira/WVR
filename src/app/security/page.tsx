@@ -34,7 +34,7 @@ export default function SecurityPage() {
             your data, and your risk.
           </h1>
           <p className="mt-4 text-[16px] leading-[1.6] text-body">
-            We&apos;re a small team without formal certifications yet — so here&apos;s exactly how we
+            We&apos;re a small team without formal certifications yet, so here&apos;s exactly how we
             operate instead of a badge that says trust us.
           </p>
         </div>

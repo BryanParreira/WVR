@@ -14,7 +14,7 @@ import { FaqBlock } from "@/components/blog/faq-block"
 const SERVICES_FAQS = [
   {
     q: "Will your AI automations work with the software and CRM we already use?",
-    a: "Yes — automations are built to plug into what you're already using (CRMs, job management software, custom databases) through API integrations, rather than requiring you to replace your existing stack.",
+    a: "Yes. Automations are built to plug into what you're already using (CRMs, job management software, custom databases) through API integrations, rather than requiring you to replace your existing stack.",
   },
   {
     q: "How do you keep our company data safe when setting up custom AI agents?",
@@ -22,22 +22,22 @@ const SERVICES_FAQS = [
   },
   {
     q: "What is Generative Engine Optimization (GEO), and how does it help us get clients compared to standard SEO?",
-    a: "GEO optimizes content to be cited or quoted directly by AI systems like ChatGPT, Perplexity, and Google's AI Overviews — a different discipline from traditional SEO, which targets ranking position in search results. The two work together, but GEO rewards clear, directly-answering content over keyword-targeted content.",
+    a: "GEO optimizes content to be cited or quoted directly by AI systems like ChatGPT, Perplexity, and Google's AI Overviews. It's a different discipline from traditional SEO, which targets ranking position in search results. The two work together, but GEO rewards clear, directly-answering content over keyword-targeted content.",
   },
   {
     q: "How long does it take to build and deploy, and how much effort is required from my team?",
-    a: "Foundation projects typically complete in 4-6 weeks, Growth engagements run 8-12 weeks, and larger Ecosystem builds are scoped individually during discovery. Most of the time investment on your end is upfront — discovery and feedback — with the build itself handled directly by us.",
+    a: "Foundation projects typically complete in 4 to 6 weeks, Growth engagements run 8 to 12 weeks, and larger Ecosystem builds are scoped individually during discovery. Most of the time investment on your end is upfront (discovery and feedback), with the build itself handled directly by us.",
   },
   {
     q: "Do you handle ongoing maintenance, tech issues, and system updates after launch?",
-    a: "Yes. Support windows are built into each pricing tier, and when something needs fixing after that, it goes straight to the person who built it — not a ticket queue. We're a long-term technical partner, not a hand-off-and-disappear vendor.",
+    a: "Yes. Support windows are built into each pricing tier, and when something needs fixing after that, it goes straight to the person who built it, not a ticket queue. We're a long-term technical partner, not a hand-off-and-disappear vendor.",
   },
 ]
 
 export const metadata: Metadata = {
   title: "Services — AI Automation & Cybersecurity",
   description:
-    "AI automation and proactive cybersecurity from WebVisionRank — backed by web development, custom software, marketing/GEO, and data intelligence.",
+    "AI automation and proactive cybersecurity from WebVisionRank, backed by web development, custom software, marketing/GEO, and data intelligence.",
   keywords: [
     "AI automation services",
     "cybersecurity services",
@@ -79,12 +79,12 @@ export default function ServicesPage() {
               />
             </h1>
             <p className="text-[16px] text-body leading-[1.5] mt-6 max-w-lg">
-              We lead with AI automation and cybersecurity — and back it up with web development,
+              We lead with AI automation and cybersecurity, and back it up with web development,
               custom software, marketing, and data intelligence when your business needs them.
             </p>
           </AnimateIn>
           <AnimateIn delay={0.1} className="mt-8 max-w-2xl">
-            <DirectAnswer text="WebVisionRank is an AI and cybersecurity agency for small and mid-size businesses. We lead with two disciplines — Agentic AI automation and Zero Trust cybersecurity — and offer web development, custom software, digital marketing, and data intelligence as complementary services under one point of contact." />
+            <DirectAnswer text="WebVisionRank is an AI and cybersecurity agency for small and mid-size businesses. We lead with two disciplines, Agentic AI automation and Zero Trust cybersecurity, and offer web development, custom software, digital marketing, and data intelligence as complementary services under one point of contact." />
           </AnimateIn>
         </div>
       </section>

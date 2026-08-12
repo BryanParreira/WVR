@@ -137,7 +137,7 @@ export function ServicesGrid({ limit }: { limit?: number }) {
         <AnimateIn className="mb-14">
           <p className="caption-uppercase mb-3"><EncryptedText text="What We Do" duration={900} /></p>
           <h2 className="display-lg max-w-2xl">
-            Two disciplines we lead with —
+            Two disciplines we lead with:
             <br />
             <FlipWords words={FLIP_WORDS} duration={2800} className="text-body" />
           </h2>

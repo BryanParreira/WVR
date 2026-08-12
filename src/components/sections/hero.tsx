@@ -99,7 +99,7 @@ export function Hero() {
           animate={{ opacity: 1,  y: 0 }}
           transition={{ duration: 0.55, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
           className="text-[16px] text-body leading-[1.5] max-w-xl mb-9">
-          WebVisionRank leads with Agentic AI automation and Zero Trust cybersecurity —
+          WebVisionRank leads with Agentic AI automation and Zero Trust cybersecurity,
           backed by web development, custom software, marketing, and data intelligence
           when your business needs them.
         </motion.p>
@@ -168,9 +168,9 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="mt-12 py-8 border-t border-hairline flex flex-wrap divide-x divide-hairline">
+              className="mt-12 py-8 border-t border-hairline grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
               {stats.map(({ value, label }) => (
-                <div key={label} className="pr-8 pl-8 first:pl-0">
+                <div key={label}>
                   <AnimatedNumber value={value} />
                   <div className="text-[13px] text-muted">{label}</div>
                 </div>

@@ -27,7 +27,7 @@ export function OrganizationJsonLd() {
     },
     image: `${BASE}/opengraph-image`,
     description:
-      "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
+      "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity, backed by web development, custom software, marketing, and data intelligence.",
     slogan: "AI Powered. Security First. Elite Engineering.",
     foundingDate: "2024",
     areaServed: "Worldwide",

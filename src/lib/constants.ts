@@ -244,7 +244,7 @@ export const SITE_CONFIG = {
   name: "WebVisionRank",
   tagline: "AI Powered. Security First. Elite Engineering.",
   description:
-    "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
+    "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity, backed by web development, custom software, marketing, and data intelligence.",
   url: "https://webvisionrank.com",
   email: "support@webvisionrank.com",
   social: {

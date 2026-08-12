@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "WebVisionRank — AI Powered. Security First. Elite Engineering.",
     description:
-      "We lead with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
+      "We lead with Agentic AI automation and Zero Trust cybersecurity, backed by web development, custom software, marketing, and data intelligence.",
     url: "https://webvisionrank.com",
   },
   twitter: {
     title: "WebVisionRank — AI Powered. Security First. Elite Engineering.",
     description:
-      "We lead with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
+      "We lead with Agentic AI automation and Zero Trust cybersecurity, backed by web development, custom software, marketing, and data intelligence.",
   },
 }
 import { Hero } from "@/components/sections/hero"

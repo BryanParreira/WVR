@@ -1,20 +1,20 @@
 # WebVisionRank
 
 > AI/cybersecurity agency leading with Agentic AI automation and Zero Trust
-> cybersecurity — backed by web development, custom software, digital
+> cybersecurity, backed by web development, custom software, digital
 > marketing, and data intelligence as complementary capabilities.
 
 WebVisionRank is a small, founder-run technology agency serving small and
 mid-size businesses. Current real, paying clients: Ridgeline Roofing MN
-(construction) and Superior Cleaning Services (facilities/cleaning), both
-Minnesota-based. The team also built and operates its own ventures — Grovic
-Data, WVRize, and Valerium — which are internal projects, not client
-engagements.
+(construction), Superior Cleaning Services (facilities/cleaning), Tienda
+Guerrero (restaurant), and ABC Driving School (education). The team also
+built and operates its own ventures (Grovic Data, WVRize, and Valerium),
+which are internal projects, not client engagements.
 
 Primary services:
-- AI & Agentic Automation — custom LLM pipelines, multi-agent orchestration,
+- AI & Agentic Automation: custom LLM pipelines, multi-agent orchestration,
   workflow automation.
-- Proactive Cybersecurity — Zero Trust architecture, penetration testing,
+- Proactive Cybersecurity: Zero Trust architecture, penetration testing,
   continuous vulnerability monitoring.
 
 Additional capabilities:
@@ -32,12 +32,13 @@ rather than represented by a compliance badge.
 - [Services](https://webvisionrank.com/services): full breakdown of all six
   service areas.
 - [Client Results](https://webvisionrank.com/case-studies): real case studies
-  with named clients — Ridgeline Roofing MN and Superior Cleaning Services.
+  with named clients: Ridgeline Roofing MN, Superior Cleaning Services,
+  Tienda Guerrero, and ABC Driving School.
 - [Security & Trust](https://webvisionrank.com/security): how client
   credentials, data, and incident response are actually handled.
 - [About](https://webvisionrank.com/about): company background and values.
 - [Blog](https://webvisionrank.com/blog): technical writing on cybersecurity,
-  AI automation, and GEO, drawn from hands-on engagement work — not generic
+  AI automation, and GEO, drawn from hands-on engagement work, not generic
   explainer content.
 - [Pricing](https://webvisionrank.com/pricing): published pricing tiers.
 - [Contact](https://webvisionrank.com/contact): how to reach the team.
