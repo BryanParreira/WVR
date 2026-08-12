@@ -4,7 +4,12 @@ import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { SiteLayout } from "@/components/layout/site-layout"
 import { ProgressiveBlur } from "@/components/ui/progressive-blur"
-import { POSTS, getPost, formatDate } from "@/lib/blog-posts"
+import { POSTS, getPost, formatDate, getRelatedServiceHref, getRelatedPosts } from "@/lib/blog-posts"
+import { getCaseStudy } from "@/lib/case-studies"
+import { DirectAnswer } from "@/components/blog/direct-answer"
+import { FaqBlock } from "@/components/blog/faq-block"
+import { RelatedPosts } from "@/components/blog/related-posts"
+import { BlogPostingJsonLd, BlogFaqJsonLd } from "@/components/seo/json-ld"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -16,13 +21,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const post = getPost(slug)
   if (!post) return {}
+  const description = post.metaDescription ?? post.excerpt
   return {
     title: `${post.title} — WebVisionRank Blog`,
-    description: post.excerpt,
+    description,
     alternates: { canonical: `https://webvisionrank.com/blog/${slug}` },
     openGraph: {
       title: post.title,
-      description: post.excerpt,
+      description,
       url: `https://webvisionrank.com/blog/${slug}`,
     },
   }
@@ -36,9 +42,14 @@ export default async function BlogPostPage({ params }: Props) {
   const postIndex = POSTS.findIndex((p) => p.slug === slug)
   const next = POSTS[postIndex + 1] ?? null
   const prev = POSTS[postIndex - 1] ?? null
+  const relatedServiceHref = getRelatedServiceHref(post.category)
+  const relatedCaseStudy = post.relatedCaseStudy ? getCaseStudy(post.relatedCaseStudy) : undefined
+  const relatedPosts = getRelatedPosts(post)
 
   return (
     <SiteLayout>
+      <BlogPostingJsonLd post={post} />
+      {post.faq && post.faq.length > 0 && <BlogFaqJsonLd items={post.faq} />}
       {/* Article header */}
       <section className="relative border-b border-hairline bg-canvas px-6 pb-12 pt-14 sm:pt-20 overflow-hidden">
         {/* Ambient orb */}
@@ -71,13 +82,17 @@ export default async function BlogPostPage({ params }: Props) {
             <span className="caption-uppercase font-medium text-ink">
               {post.category}
             </span>
-            <span className="h-1 w-1 rounded-full bg-hairline-strong" aria-hidden />
-            <span
-              className="caption-uppercase text-muted"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              {formatDate(post.date)}
-            </span>
+            {post.updatedAt && (
+              <>
+                <span className="h-1 w-1 rounded-full bg-hairline-strong" aria-hidden />
+                <span
+                  className="caption-uppercase text-muted"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  Updated {formatDate(post.updatedAt)}
+                </span>
+              </>
+            )}
             <span className="h-1 w-1 rounded-full bg-hairline-strong" aria-hidden />
             <span
               className="caption-uppercase text-muted"
@@ -110,6 +125,12 @@ export default async function BlogPostPage({ params }: Props) {
             </p>
           </div>
 
+          {post.directAnswer && (
+            <div className="py-8 border-b border-hairline">
+              <DirectAnswer text={post.directAnswer} />
+            </div>
+          )}
+
           {/* Content sections in scrollable reading pane */}
           <div className="relative mt-0">
             <ProgressiveBlur
@@ -139,6 +160,35 @@ export default async function BlogPostPage({ params }: Props) {
               blurAmount="2px"
             />
           </div>
+
+          {(relatedServiceHref || relatedCaseStudy) && (
+            <div className="flex flex-wrap gap-3 py-6 border-t border-hairline">
+              {relatedServiceHref && (
+                <Link
+                  href={relatedServiceHref}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3.5 py-1.5 text-[13px] font-medium text-body hover:text-ink transition-colors duration-150"
+                >
+                  Related service <ArrowRight className="h-3 w-3" />
+                </Link>
+              )}
+              {relatedCaseStudy && (
+                <Link
+                  href={`/case-studies/${relatedCaseStudy.slug}`}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3.5 py-1.5 text-[13px] font-medium text-body hover:text-ink transition-colors duration-150"
+                >
+                  {relatedCaseStudy.client} case study <ArrowRight className="h-3 w-3" />
+                </Link>
+              )}
+            </div>
+          )}
+
+          {post.faq && post.faq.length > 0 && (
+            <div className="border-t border-hairline">
+              <FaqBlock items={post.faq} />
+            </div>
+          )}
+
+          <RelatedPosts posts={relatedPosts} />
 
           {/* CTA */}
           <div className="card-hover mt-4 rounded-[12px] border border-hairline bg-surface p-8 text-center">

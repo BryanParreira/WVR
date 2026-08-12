@@ -3,6 +3,7 @@ import type { NavItem, Service, PricingTier, Testimonial } from "@/types"
 export const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
+  { label: "Client Results", href: "/case-studies" },
   { label: "Pricing", href: "/pricing" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
@@ -23,6 +24,7 @@ export const SERVICES: Service[] = [
       "Workflow automation & API chaining",
     ],
     href: "/services#ai-automation",
+    tier: "lead",
   },
   {
     id: "cybersecurity",
@@ -37,6 +39,7 @@ export const SERVICES: Service[] = [
       "Security audits & compliance",
     ],
     href: "/services#cybersecurity",
+    tier: "lead",
   },
   {
     id: "digital-marketing",
@@ -51,6 +54,7 @@ export const SERVICES: Service[] = [
       "Performance analytics & attribution",
     ],
     href: "/services#digital-marketing",
+    tier: "secondary",
   },
   {
     id: "custom-software",
@@ -65,6 +69,7 @@ export const SERVICES: Service[] = [
       "DevOps & CI/CD pipelines",
     ],
     href: "/services#custom-software",
+    tier: "secondary",
   },
   {
     id: "web-development",
@@ -79,6 +84,7 @@ export const SERVICES: Service[] = [
       "E-commerce & landing pages",
     ],
     href: "/services#web-development",
+    tier: "secondary",
   },
   {
     id: "data-intelligence",
@@ -93,6 +99,7 @@ export const SERVICES: Service[] = [
       "Business intelligence reporting",
     ],
     href: "/services#data-intelligence",
+    tier: "secondary",
   },
 ]
 
@@ -153,33 +160,22 @@ export const PRICING_TIERS: PricingTier[] = [
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    name: "Marcus T.",
-    role: "CEO",
-    company: "TechScale Ventures",
+    name: "Cory",
+    role: "Owner",
+    company: "Ridgeline Roofing MN",
     content:
-      "WebVisionRank's AI automation cut our operational overhead by 40% in three months. The multi-agent system they built handles tasks we thought required three full-time hires.",
+      "Honestly, WebVisionRank solved so many headaches for us at Ridgeline. They handle our marketing and social media, set up automations that save us hours every week, and locked down our tech security. Whenever a random IT issue pops up, they jump on it immediately. Super reliable team.",
     rating: 5,
-    result: "↓ 40% operational cost",
+    result: "20× organic reach increase",
   },
   {
     id: "2",
-    name: "Priya K.",
-    role: "CTO",
-    company: "FinCore Solutions",
+    name: "Gerson",
+    role: "CEO",
+    company: "Superior Cleaning Services",
     content:
-      "Their Zero Trust security audit uncovered vulnerabilities our previous provider missed entirely. The team's depth of knowledge in both AI and cybersecurity is genuinely rare.",
+      "WebVisionRank made scaling Superior Cleaning so much easier. They dialed in our marketing to bring in a steady stream of new leads, and the automations they built handle most of our client follow-ups automatically. Saves us a ton of admin work every single day!",
     rating: 5,
-    result: "✓ 0 breaches in production",
-  },
-  {
-    id: "3",
-    name: "James R.",
-    role: "Founder",
-    company: "GrowthEdge Agency",
-    content:
-      "Our organic traffic tripled in six months after the GEO strategy. They understand how LLMs surface content — not just Google. Ahead of the curve.",
-    rating: 5,
-    result: "↑ 3× organic traffic",
   },
 ]
 
@@ -214,7 +210,7 @@ export const SITE_CONFIG = {
   name: "WebVisionRank",
   tagline: "AI Powered. Security First. Elite Engineering.",
   description:
-    "Hybrid AI tech agency bridging Agentic AI workflows, Proactive Cybersecurity, and Elite Custom Development.",
+    "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
   url: "https://webvisionrank.com",
   email: "support@webvisionrank.com",
   social: {

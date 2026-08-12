@@ -5,15 +5,18 @@ import { useRef } from "react"
 import { useInView } from "framer-motion"
 import { EncryptedText } from "@/components/ui/encrypted-text"
 
-const companies = [
-  { name: "Grovic Data",          tag: "Data Intelligence" },
-  { name: "Ridgeline Roofing MN", tag: "Construction"      },
-  { name: "Superior Cleaning",    tag: "Facilities"        },
-  { name: "WVRize",               tag: "Technology"        },
-  { name: "Valerium",             tag: "Finance"           },
+const clients = [
+  { name: "Ridgeline Roofing MN", tag: "Construction" },
+  { name: "Superior Cleaning",    tag: "Facilities"   },
 ]
 
-function ClientCell({ company, index }: { company: typeof companies[0]; index: number }) {
+const ventures = [
+  { name: "Grovic Data", tag: "Data Intelligence" },
+  { name: "WVRize",      tag: "Technology"         },
+  { name: "Valerium",    tag: "Finance"             },
+]
+
+function ClientCell({ company, index }: { company: { name: string; tag: string }; index: number }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-40px" })
 
@@ -57,8 +60,6 @@ function ClientCell({ company, index }: { company: typeof companies[0]; index: n
 }
 
 export function TrustedBy() {
-  const doubled = [...companies, ...companies]
-
   return (
     <section className="py-10 px-6 border-t border-hairline bg-canvas">
       <div className="mx-auto max-w-[1200px]">
@@ -66,61 +67,39 @@ export function TrustedBy() {
         {/* Header row */}
         <div className="flex items-center gap-4 mb-7">
           <p className="caption-uppercase text-muted">
-            <EncryptedText text="Trusted by" duration={800} />
+            <EncryptedText text="Clients we work with" duration={800} />
           </p>
-          <div className="h-px flex-1 bg-hairline max-w-[48px]" />
-          <span
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-hairline bg-surface"
-            style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#1f8a65] animate-pulse" />
-            <span
-              className="text-[11px] font-medium text-body"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              5 active clients
-            </span>
-          </span>
-          <div className="h-px flex-1 bg-hairline hidden sm:block" />
-          <p className="hidden sm:block text-[12px] text-muted" style={{ fontFamily: "var(--font-mono)" }}>
-            3 industries · growing
-          </p>
+          <div className="h-px flex-1 bg-hairline" />
         </div>
 
-        {/* Desktop: numbered grid with vertical dividers */}
-        <div className="hidden md:grid md:grid-cols-5 border-t border-b border-hairline">
-          {companies.map((company, i) => (
+        {/* Real client engagements */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-b border-hairline mb-10">
+          {clients.map((company, i) => (
             <ClientCell key={company.name} company={company} index={i} />
           ))}
         </div>
 
-        {/* Mobile: marquee strip */}
-        <div className="relative overflow-hidden md:hidden">
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10"
-            style={{ background: "linear-gradient(to right, var(--canvas), transparent)" }}
-          />
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10"
-            style={{ background: "linear-gradient(to left, var(--canvas), transparent)" }}
-          />
-          <div className="animate-marquee flex items-stretch gap-3 w-max py-2">
-            {doubled.map((c, i) => (
-              <div
-                key={i}
-                className="flex flex-col gap-1 px-4 py-3 rounded-[8px] border border-hairline bg-surface whitespace-nowrap"
-              >
-                <span className="text-[13px] font-semibold text-body leading-tight">{c.name}</span>
-                <span
-                  className="text-[10px] uppercase tracking-[0.1em] text-muted"
-                  style={{ fontFamily: "var(--font-mono)" }}
-                >
-                  {c.tag}
-                </span>
-              </div>
-            ))}
-          </div>
+        {/* Ventures we've built — explicitly separate from client engagements */}
+        <div className="flex items-center gap-4 mb-4">
+          <p className="text-[11px] uppercase tracking-[0.12em] text-muted/60" style={{ fontFamily: "var(--font-mono)" }}>
+            Also behind these ventures
+          </p>
+          <div className="h-px flex-1 bg-hairline max-w-[48px]" />
         </div>
+        <div className="flex flex-wrap gap-2">
+          {ventures.map((v) => (
+            <span
+              key={v.name}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hairline bg-surface text-[12px] text-muted"
+            >
+              {v.name}
+              <span className="text-muted/50">· {v.tag}</span>
+            </span>
+          ))}
+        </div>
+        <p className="mt-2 text-[11px] text-muted/60">
+          Companies founded/built by WebVisionRank, not client engagements.
+        </p>
 
       </div>
     </section>

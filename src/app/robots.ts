@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        disallow: ["/api/", "/for-sales"],
       },
     ],
     sitemap: "https://webvisionrank.com/sitemap.xml",

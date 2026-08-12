@@ -63,12 +63,14 @@ export function FeaturedCard({ post }: { post: Post }) {
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-hairline pt-5">
-          <span
-            className="text-[12px] text-muted"
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            {formatDate(post.date)}
-          </span>
+          {post.updatedAt ? (
+            <span
+              className="text-[12px] text-muted"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              Updated {formatDate(post.updatedAt)}
+            </span>
+          ) : <span />}
           <span className="flex items-center gap-1.5 text-[13px] font-medium text-muted transition-all duration-150 group-hover:text-ink">
             Read article
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />

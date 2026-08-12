@@ -54,7 +54,7 @@ export function PostCard({ post }: { post: Post }) {
             className="text-[11px] text-muted"
             style={{ fontFamily: "var(--font-mono)" }}
           >
-            {formatDate(post.date)} · {post.readTime}
+            {post.updatedAt ? `Updated ${formatDate(post.updatedAt)} · ` : ""}{post.readTime}
           </span>
           <ArrowRight className="h-3.5 w-3.5 text-muted transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-ink" />
         </div>

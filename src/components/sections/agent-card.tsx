@@ -118,40 +118,40 @@ const WELCOME: Line[] = [
 // ─── Run workflows (with live progress bars) ──────────────────────────────────
 const RUN_WORKFLOWS: Record<string, () => Line[]> = {
   "crm-automation": () => [
-    { text: "→ CRM-Automation Agent v2.1", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: production", delay: 80 },
+    { text: "→ CRM-Automation Agent (example workflow)", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: illustrative", delay: 80 },
     { text: "", delay: 60 },
-    { type: "progress", label: "fetch_deals",  done: "142 records",  duration: 700,  color: D.green, delay: 120 },
+    { type: "progress", label: "fetch_deals",  done: "records fetched",  duration: 700,  color: D.green, delay: 120 },
     { type: "progress", label: "enrich_leads", done: "all enriched", duration: 1100, color: D.green, delay: 80  },
-    { type: "progress", label: "score_intent", done: "47 qualified", duration: 850,  color: D.green, delay: 80  },
+    { type: "progress", label: "score_intent", done: "qualified", duration: 850,  color: D.green, delay: 80  },
     { type: "progress", label: "update_crm",   done: "synced",       duration: 500,  color: D.green, delay: 80  },
     { text: "", delay: 1000 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
-    { text: "  ✓ saved 5.8h · cost: $0.43 · labor equiv: $290", color: D.green, delay: 80 },
+    { text: "  ✓ example: this is what CRM automation looks like end to end", color: D.green, delay: 80 },
   ],
   "content-pipeline": () => [
-    { text: "→ Content-Pipeline Agent v1.4", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o  ·  temp: 0.7  ·  mode: production", delay: 80 },
+    { text: "→ Content-Pipeline Agent (example workflow)", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o  ·  temp: 0.7  ·  mode: illustrative", delay: 80 },
     { text: "", delay: 60 },
-    { type: "progress", label: "scrape_trends",  done: "28 topics",  duration: 700,  color: D.green, delay: 120 },
-    { type: "progress", label: "draft_articles", done: "12 drafts",  duration: 1500, color: D.green, delay: 80  },
-    { type: "progress", label: "seo_optimize",   done: "score: 94",  duration: 900,  color: D.green, delay: 80  },
+    { type: "progress", label: "scrape_trends",  done: "topics found",  duration: 700,  color: D.green, delay: 120 },
+    { type: "progress", label: "draft_articles", done: "drafts ready",  duration: 1500, color: D.green, delay: 80  },
+    { type: "progress", label: "seo_optimize",   done: "optimized",  duration: 900,  color: D.green, delay: 80  },
     { type: "progress", label: "publish_batch",  done: "published",  duration: 600,  color: D.green, delay: 80  },
     { text: "", delay: 1400 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
-    { text: "  ✓ saved 9.2h · cost: $0.81 · labor equiv: $690", color: D.green, delay: 80 },
+    { text: "  ✓ example: this is what a content pipeline agent automates", color: D.green, delay: 80 },
   ],
   "invoice-processor": () => [
-    { text: "→ Invoice-Processor Agent v3.0", color: D.ink, delay: 40 },
-    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: production", delay: 80 },
+    { text: "→ Invoice-Processor Agent (example workflow)", color: D.ink, delay: 40 },
+    { text: "  model: gpt-4o-mini  ·  temp: 0  ·  mode: illustrative", delay: 80 },
     { text: "", delay: 60 },
-    { type: "progress", label: "fetch_invoices",  done: "89 pending",  duration: 600,  color: D.green, delay: 120 },
+    { type: "progress", label: "fetch_invoices",  done: "invoices fetched",  duration: 600,  color: D.green, delay: 120 },
     { type: "progress", label: "classify_items",  done: "categorized", duration: 900,  color: D.green, delay: 80  },
     { type: "progress", label: "extract_data",    done: "structured",  duration: 1200, color: D.green, delay: 80  },
     { type: "progress", label: "sync_accounting", done: "posted",      duration: 500,  color: D.green, delay: 80  },
     { text: "", delay: 1200 },
     { text: "  " + "─".repeat(40), color: D.dim, delay: 40 },
-    { text: "  ✓ saved 7.1h · cost: $0.56 · labor equiv: $520", color: D.green, delay: 80 },
+    { text: "  ✓ example: this is what invoice processing automation looks like", color: D.green, delay: 80 },
   ],
 }
 
@@ -168,11 +168,10 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  pricing    investment tiers" },
     { text: "  about      who we are" },
     { text: "  contact    get in touch" },
-    { text: "  status     live system status" },
     { text: "" },
-    { text: "  run crm-automation      live agent demo", color: D.green },
-    { text: "  run content-pipeline    live agent demo", color: D.green },
-    { text: "  run invoice-processor   live agent demo", color: D.green },
+    { text: "  run crm-automation      example agent demo", color: D.green },
+    { text: "  run content-pipeline    example agent demo", color: D.green },
+    { text: "  run invoice-processor   example agent demo", color: D.green },
     { text: "" },
     { text: "  ls  ·  whoami  ·  uptime  ·  clear  ·  [tab] autocomplete", color: D.dim },
   ],
@@ -187,21 +186,8 @@ const CMDS: Record<string, () => Line[]> = {
   ],
 
   uptime: () => [
-    { text: "99.9%   uptime SLA across all client systems", color: D.ink },
-    { text: "0       security breaches since founding" },
-    { text: "40%     avg. cost reduction via AI automation" },
-    { text: "3×      avg. traffic growth via GEO" },
-  ],
-
-  status: () => [
-    { text: "System Status:", color: D.ink },
-    { text: "" },
-    { text: "  ● agents       3 active", color: D.green },
-    { text: "  ● security     0 threats detected", color: D.green },
-    { text: "  ● uptime       99.9%  ·  all systems operational", color: D.green },
-    { text: "  ● projects     6 in production", color: D.green },
-    { text: "" },
-    { text: "  all systems nominal", color: D.muted },
+    { text: "webvisionrank.com — up since launch.", color: D.ink },
+    { text: "for real client results, see /case-studies", color: D.muted },
   ],
 
   services: () => [
@@ -231,8 +217,6 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  · RAG knowledge base integrations" },
     { text: "  · Workflow automation & API chaining" },
     { text: "" },
-    { text: "  Result: 40% avg. cost reduction", color: D.ink },
-    { text: "" },
     { text: "  → try: run crm-automation", color: D.muted },
   ],
 
@@ -247,7 +231,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  · Continuous vulnerability monitoring" },
     { text: "  · Security audits & compliance" },
     { text: "" },
-    { text: "  Result: 0 client breaches", color: D.ink },
+    { text: "  → see how we handle access & data: /security", color: D.muted },
   ],
 
   dev: () => [
@@ -260,8 +244,6 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  · API design & microservices" },
     { text: "  · Database architecture & DevOps" },
     { text: "  · CI/CD pipelines" },
-    { text: "" },
-    { text: "  SLA: 99.9% uptime guaranteed", color: D.ink },
   ],
 
   geo: () => [
@@ -275,7 +257,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  · Conversion rate optimization" },
     { text: "  · Performance analytics & attribution" },
     { text: "" },
-    { text: "  Result: 3× avg. traffic growth", color: D.ink },
+    { text: "  → see real results: /case-studies", color: D.muted },
   ],
 
   pricing: () => [
@@ -302,7 +284,7 @@ const CMDS: Record<string, () => Line[]> = {
     { text: "  Most agencies are too broad to be excellent," },
     { text: "  or too narrow to be strategic. We're the exception." },
     { text: "" },
-    { text: "  40% ↓ cost · 0 breaches · 3× traffic · 99.9% uptime", color: D.ink },
+    { text: "  → real client results: /case-studies", color: D.muted },
   ],
 
   contact: () => [
@@ -326,9 +308,8 @@ const ALL_COMPLETIONS = [
 const QUICK_CHIPS = [
   { label: "services",           desc: "what we build"    },
   { label: "ai",                 desc: "AI & automation"  },
-  { label: "run crm-automation", desc: "live agent demo"  },
+  { label: "run crm-automation", desc: "example agent demo" },
   { label: "security",           desc: "Zero Trust"       },
-  { label: "status",             desc: "system status"    },
   { label: "pricing",            desc: "tiers"            },
 ]
 

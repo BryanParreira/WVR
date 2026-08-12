@@ -14,10 +14,12 @@ const footerLinks = {
   Company: [
     { label: "About", href: "/about" },
     { label: "Services", href: "/services" },
+    { label: "Client Results", href: "/case-studies" },
     { label: "Pricing", href: "/pricing" },
     { label: "Contact", href: "/contact" },
   ],
   Legal: [
+    { label: "Security & Trust", href: "/security" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
   ],
@@ -64,8 +66,8 @@ export function Footer() {
             </Link>
 
             <p className="text-[14px] text-body leading-[1.5] mb-6 max-w-xs">
-              Hybrid AI tech agency bridging Agentic AI workflows, Zero Trust cybersecurity,
-              and elite custom development.
+              We lead with Agentic AI automation and Zero Trust cybersecurity — backed by
+              web development, custom software, marketing, and data intelligence.
             </p>
 
             {/* Social */}

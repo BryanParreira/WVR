@@ -5,6 +5,7 @@ export interface Service {
   icon: string
   features: string[]
   href: string
+  tier?: "lead" | "secondary"
 }
 
 export interface PricingTier {

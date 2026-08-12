@@ -9,12 +9,6 @@ import { PRICING_TIERS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 
-const CLIENT_COUNTS: Record<string, string> = {
-  foundation: "5 active",
-  growth:     "8 active",
-  enterprise: "12+",
-}
-
 type Tier = typeof PRICING_TIERS[number]
 
 function TierCardContent({ tier }: { tier: Tier }) {
@@ -26,21 +20,6 @@ function TierCardContent({ tier }: { tier: Tier }) {
           <p className={cn("caption-uppercase", tier.highlighted ? "text-[#a09c92]" : "text-muted")}>
             {tier.name}
           </p>
-          {/* Social proof client count */}
-          <span
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium"
-            style={
-              tier.highlighted
-                ? { background: "rgba(240,237,232,0.06)", border: "1px solid rgba(240,237,232,0.10)", color: "#6b6760", fontFamily: "var(--font-mono)" }
-                : { background: "rgba(38,37,30,0.04)",  border: "1px solid rgba(38,37,30,0.08)",  color: "#807d72", fontFamily: "var(--font-mono)" }
-            }
-          >
-            <span
-              className="h-1 w-1 rounded-full"
-              style={{ background: tier.highlighted ? "rgba(240,237,232,0.35)" : "rgba(38,37,30,0.3)" }}
-            />
-            {CLIENT_COUNTS[tier.id]} clients
-          </span>
         </div>
 
         <div className="flex items-baseline gap-1">

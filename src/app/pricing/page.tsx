@@ -53,7 +53,7 @@ const faqs = [
 export default function PricingPage() {
   return (
     <SiteLayout>
-      <PricingFaqJsonLd />
+      <PricingFaqJsonLd faqs={faqs} />
       <section className="pt-12 pb-4 px-6 sm:pt-20 bg-canvas">
         <div className="mx-auto max-w-[1200px]">
           <AnimateIn>

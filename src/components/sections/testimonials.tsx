@@ -37,7 +37,11 @@ export function Testimonials() {
   const [hovered, setHovered] = useState(false)
   const total = TESTIMONIALS.length
 
+  // Hides entirely if TESTIMONIALS is ever emptied out again.
+  const hasTestimonials = total > 0
+
   useEffect(() => {
+    if (!hasTestimonials) return
     const t = setInterval(() => {
       setDir(1)
       setActive(i => (i + 1) % total)
@@ -49,6 +53,8 @@ export function Testimonials() {
     setDir(d)
     setActive(next)
   }
+
+  if (!hasTestimonials) return null
 
   const t = TESTIMONIALS[active]
 

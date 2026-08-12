@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono, Source_Code_Pro } from "next/font/google"
 import { ThemeProvider } from "@/components/providers/theme-provider"
-import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld"
+import { OrganizationJsonLd, WebSiteJsonLd, LocalBusinessJsonLd } from "@/components/seo/json-ld"
 import { ScrollProgressBar } from "@/components/ui/scroll-progress"
 import { SITE_CONFIG } from "@/lib/constants"
 import "./globals.css"
@@ -106,6 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-full flex flex-col antialiased bg-canvas text-body">
         <OrganizationJsonLd />
+        <LocalBusinessJsonLd />
         <WebSiteJsonLd />
         <ScrollProgressBar />
         <ThemeProvider

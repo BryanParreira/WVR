@@ -1,0 +1,71 @@
+export const NEEDS_REAL_DATA = "{{NEEDS_REAL_DATA"
+
+export function isPlaceholder(value: string): boolean {
+  return value.startsWith(NEEDS_REAL_DATA)
+}
+
+export type CaseStudyResult = {
+  label: string
+  value: string
+}
+
+export type CaseStudy = {
+  slug: string
+  client: string
+  industry: string
+  summary: string
+  challenge: string
+  solution: string
+  results: CaseStudyResult[]
+  quote?: { content: string; name: string; role: string }
+}
+
+// Only real, paying clients get a case study entry — see AGENTS trust rules.
+// Narrative fields (challenge/solution) and result values are marked
+// {{NEEDS_REAL_DATA: ...}} until the real engagement details are supplied.
+// Format needed per field: challenge/solution in your own words (a few
+// sentences each), results as short label + real, verifiable value.
+export const CASE_STUDIES: CaseStudy[] = [
+  {
+    slug: "ridgeline-roofing-mn",
+    client: "Ridgeline Roofing MN",
+    industry: "Construction",
+    summary:
+      "Ridgeline Roofing MN came to us with a functioning website (built by another company) but almost no social presence, no automation in their day-to-day operations, and no one managing security or the rest of their tech stack.",
+    challenge:
+      "Ridgeline's website was already handled elsewhere, so the gap wasn't a build — it was everything around it. Their organic social content wasn't reaching anyone beyond existing followers, manual work was eating time that should've gone into the business, and there was no one actively managing security or the broader tech stack.",
+    solution:
+      "We became Ridgeline's ongoing tech partner for everything outside the website itself: social media management and organic content strategy, workflow automation to cut down manual admin work, security, and general tech support as needs come up. On the marketing side, that meant a consistent posting strategy built around what actually gets engagement for a local roofing company — before-and-after project content, seasonal storm-response messaging, and local trust signals.",
+    results: [
+      { label: "Organic social views (avg.)", value: "100 → 2,000/mo" },
+      { label: "Organic reach increase", value: "20×" },
+    ],
+  },
+  {
+    slug: "superior-cleaning-services",
+    client: "Superior Cleaning Services",
+    industry: "Facilities",
+    summary:
+      "Superior Cleaning Services had no online activity at all before working with us. It's a shorter, more recent engagement than Ridgeline's, but organic reach is already building.",
+    challenge:
+      "Superior Cleaning had zero social media presence — no posting, no content, nothing bringing in views organically to reach potential commercial and residential clients in their service area.",
+    solution:
+      "We took them from no activity to a consistent schedule of two posts a week, mixing fun, informational videos with real client work — building organic views the same way we did for Ridgeline, without paid ads.",
+    results: [
+      { label: "Posting cadence", value: "0 → 2×/week" },
+    ],
+  },
+]
+
+export function getCaseStudy(slug: string): CaseStudy | undefined {
+  return CASE_STUDIES.find((c) => c.slug === slug)
+}
+
+// Homepage stat badges pull only from verified (non-placeholder) case-study
+// results, so no unattributed agency-wide number can appear. Returns []
+// until real results exist.
+export function getVerifiedHomepageStats(): CaseStudyResult[] {
+  return CASE_STUDIES.flatMap((c) => c.results)
+    .filter((r) => !isPlaceholder(r.value) && !isPlaceholder(r.label))
+    .slice(0, 4)
+}

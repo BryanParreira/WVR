@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit -m ' *)",
+      "Bash(npm audit *)",
+      "Bash(python3 -c ' *)",
+      "Bash(npm view *)",
+      "Bash(npm ls *)"
+    ]
+  }
+}

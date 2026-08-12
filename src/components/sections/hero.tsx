@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AgentCard } from "@/components/sections/agent-card"
 import { FlipWords } from "@/components/ui/flip-words"
+import { getVerifiedHomepageStats } from "@/lib/case-studies"
 
 function AnimatedNumber({ value }: { value: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -98,8 +99,9 @@ export function Hero() {
           animate={{ opacity: 1,  y: 0,  filter: "blur(0px)" }}
           transition={{ duration: 0.55, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
           className="text-[16px] text-body leading-[1.5] max-w-xl mb-9">
-          WebVisionRank bridges Agentic AI automation, Zero Trust cybersecurity,
-          and elite custom development into one unified growth engine.
+          WebVisionRank leads with Agentic AI automation and Zero Trust cybersecurity —
+          backed by web development, custom software, marketing, and data intelligence
+          when your business needs them.
         </motion.p>
 
         {/* CTAs */}
@@ -156,27 +158,29 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Stats strip */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="mt-12 py-8 border-t border-hairline grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { value: "40%",   label: "avg. cost reduction" },
-            { value: "3×",    label: "avg. traffic growth" },
-            { value: "99.9%", label: "uptime SLA" },
-            { value: "0",     label: "client breaches" },
-          ].map(({ value, label }, i) => (
-            <div key={label} className={[
-              i % 2 !== 0 ? "border-l border-hairline pl-8" : "",
-              i === 2 ? "md:border-l md:border-hairline md:pl-8" : "",
-            ].filter(Boolean).join(" ")}>
-              <AnimatedNumber value={value} />
-              <div className="text-[13px] text-muted">{label}</div>
-            </div>
-          ))}
-        </motion.div>
+        {/* Stats strip — sourced only from verified, case-study-backed results.
+            Hidden until real case study data exists (see src/lib/case-studies.ts). */}
+        {(() => {
+          const stats = getVerifiedHomepageStats()
+          if (stats.length === 0) return null
+          return (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="mt-12 py-8 border-t border-hairline grid grid-cols-2 md:grid-cols-4 gap-8">
+              {stats.map(({ value, label }, i) => (
+                <div key={label} className={[
+                  i % 2 !== 0 ? "border-l border-hairline pl-8" : "",
+                  i === 2 ? "md:border-l md:border-hairline md:pl-8" : "",
+                ].filter(Boolean).join(" ")}>
+                  <AnimatedNumber value={value} />
+                  <div className="text-[13px] text-muted">{label}</div>
+                </div>
+              ))}
+            </motion.div>
+          )
+        })()}
       </div>
 
     </section>

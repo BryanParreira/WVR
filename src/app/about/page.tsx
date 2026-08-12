@@ -11,6 +11,7 @@ import { EncryptedText } from "@/components/ui/encrypted-text"
 import { Terminal } from "@/components/ui/terminal"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
 import { TextGenerateScroll } from "@/components/ui/text-generate-scroll"
+import { DirectAnswer } from "@/components/blog/direct-answer"
 
 export const metadata: Metadata = {
   title: "About — Hybrid AI Tech Agency",
@@ -94,6 +95,9 @@ export default function AboutPage() {
               at the intersection of AI automation, cybersecurity, and elite software engineering.
             </p>
           </AnimateIn>
+          <AnimateIn delay={0.1} className="mt-8 max-w-2xl">
+            <DirectAnswer text="WebVisionRank is a technology agency built around two disciplines — Agentic AI automation and Zero Trust cybersecurity — rather than spreading thin across every service a business might need. Web development, custom software, marketing, and data intelligence round out the offering as complementary capabilities, not competing priorities." />
+          </AnimateIn>
         </div>
       </section>
 
@@ -115,6 +119,7 @@ export default function AboutPage() {
           <AnimateIn className="mb-10">
             <p className="caption-uppercase mb-3"><EncryptedText text="In Practice" duration={900} /></p>
             <h2 className="display-md max-w-xl">How a WVR engagement looks.</h2>
+            <p className="mt-3 text-[13px] text-muted">Illustrative example — not live output.</p>
           </AnimateIn>
           <AnimateIn delay={0.1}>
             <Terminal
@@ -129,21 +134,19 @@ export default function AboutPage() {
                 0: [
                   "✔ Preflight checks complete.",
                   "✔ Zero Trust policies applied.",
-                  "✔ 0 vulnerabilities in production.",
+                  "✔ Findings report generated.",
                 ],
                 1: [
                   "✔ Agent deployed successfully.",
-                  "↓ 40% task reduction projected.",
-                  "→ Running 24/7 autonomously.",
+                  "→ Running autonomously.",
                 ],
                 2: [
-                  "✔ GEO score: 94 / 100",
-                  "↑ +3× AI engine visibility estimated.",
+                  "✔ GEO structure optimized.",
+                  "→ Tracking visibility across engines.",
                 ],
                 3: [
                   "✔ Staged rollout active.",
-                  "✔ All systems nominal.",
-                  "✔ Uptime SLA: 99.9%",
+                  "✔ Monitoring in place.",
                 ],
               }}
               typingSpeed={42}

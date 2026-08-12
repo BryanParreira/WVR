@@ -30,10 +30,11 @@ const FLIP_WORDS = ["AI-automated.", "security-first.", "GEO-optimized.", "built
 
 type Service = (typeof SERVICES)[0]
 
-function ServiceCard({ service }: { service: Service }) {
+function ServiceCard({ service, size = "secondary" }: { service: Service; size?: "lead" | "secondary" }) {
   const [hovered, setHovered] = useState(false)
   const Icon   = iconMap[service.icon] ?? Zap
   const accent = SERVICE_ACCENTS[service.id] ?? FALLBACK_ACCENT
+  const isLead = size === "lead"
 
   return (
     <div className="relative rounded-[12px] border border-hairline h-full">
@@ -42,7 +43,7 @@ function ServiceCard({ service }: { service: Service }) {
         href={service.href}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="group relative flex flex-col rounded-[12px] bg-surface p-6 shadow-card h-full overflow-hidden"
+        className={`group relative flex flex-col rounded-[12px] bg-surface shadow-card h-full overflow-hidden ${isLead ? "p-8" : "p-6"}`}
       >
         {/* Top accent line — hover only */}
         <div
@@ -55,9 +56,9 @@ function ServiceCard({ service }: { service: Service }) {
         />
 
         {/* Icon — neutral default, accent on hover */}
-        <div className="mb-5">
+        <div className={isLead ? "mb-6" : "mb-5"}>
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-[8px]"
+            className={`flex items-center justify-center rounded-[10px] ${isLead ? "h-12 w-12" : "h-9 w-9"}`}
             style={{
               background:   hovered ? accent.bg     : "rgba(38,37,30,0.05)",
               border:       `1px solid ${hovered ? accent.border : "rgba(38,37,30,0.09)"}`,
@@ -65,7 +66,7 @@ function ServiceCard({ service }: { service: Service }) {
             }}
           >
             <Icon
-              className="h-[17px] w-[17px]"
+              className={isLead ? "h-6 w-6" : "h-[17px] w-[17px]"}
               strokeWidth={1.75}
               style={{
                 color:      hovered ? accent.color : "#807d72",
@@ -76,12 +77,12 @@ function ServiceCard({ service }: { service: Service }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-[17px] font-semibold leading-[1.35] text-ink mb-2">
+        <h3 className={`font-semibold leading-[1.3] text-ink mb-2 ${isLead ? "text-[22px]" : "text-[17px]"}`}>
           {service.title}
         </h3>
 
         {/* Description */}
-        <p className="text-[14px] text-body leading-[1.55] mb-5 flex-1">
+        <p className={`text-body leading-[1.55] mb-5 flex-1 ${isLead ? "text-[15px]" : "text-[14px]"}`}>
           {service.description}
         </p>
 
@@ -111,12 +112,23 @@ function ServiceCard({ service }: { service: Service }) {
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
         </div>
       </Link>
+
+      {service.id === "cybersecurity" && (
+        <Link
+          href="/security"
+          className="relative mt-2 block px-6 pb-2 text-[12px] text-muted underline underline-offset-4 hover:text-ink transition-colors duration-150"
+        >
+          How we handle security & trust →
+        </Link>
+      )}
     </div>
   )
 }
 
 export function ServicesGrid({ limit }: { limit?: number }) {
-  const services = limit ? SERVICES.slice(0, limit) : SERVICES
+  const services  = limit ? SERVICES.slice(0, limit) : SERVICES
+  const lead      = services.filter((s) => s.tier === "lead")
+  const secondary = services.filter((s) => s.tier !== "lead")
 
   return (
     <section id="services" className="py-12 px-6 sm:py-20 bg-canvas">
@@ -125,19 +137,39 @@ export function ServicesGrid({ limit }: { limit?: number }) {
         <AnimateIn className="mb-14">
           <p className="caption-uppercase mb-3"><EncryptedText text="What We Do" duration={900} /></p>
           <h2 className="display-lg max-w-2xl">
-            Everything your business needs —
+            Two disciplines we lead with —
             <br />
             <FlipWords words={FLIP_WORDS} duration={2800} className="text-body" />
           </h2>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
-            <StaggerItem key={service.id}>
-              <ServiceCard service={service} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        {/* Lead pillars — AI automation & cybersecurity */}
+        {lead.length > 0 && (
+          <StaggerContainer className="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-10">
+            {lead.map((service) => (
+              <StaggerItem key={service.id}>
+                <ServiceCard service={service} size="lead" />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        )}
+
+        {/* Secondary — additional capabilities */}
+        {secondary.length > 0 && (
+          <>
+            <div className="mb-6 flex items-center gap-4">
+              <p className="caption-uppercase text-muted">Additional capabilities</p>
+              <div className="h-px flex-1 bg-hairline" />
+            </div>
+            <StaggerContainer className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {secondary.map((service) => (
+                <StaggerItem key={service.id}>
+                  <ServiceCard service={service} size="secondary" />
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </>
+        )}
 
         {limit && (
           <AnimateIn className="mt-10" delay={0.1}>

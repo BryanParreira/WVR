@@ -6,18 +6,17 @@ export const metadata: Metadata = {
   openGraph: {
     title: "WebVisionRank — AI Powered. Security First. Elite Engineering.",
     description:
-      "Hybrid AI tech agency bridging Agentic AI automation, proactive cybersecurity, and elite custom development. GEO optimized from day one.",
+      "We lead with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
     url: "https://webvisionrank.com",
   },
   twitter: {
     title: "WebVisionRank — AI Powered. Security First. Elite Engineering.",
     description:
-      "Hybrid AI tech agency bridging Agentic AI automation, proactive cybersecurity, and elite custom development. GEO optimized from day one.",
+      "We lead with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
   },
 }
 import { Hero } from "@/components/sections/hero"
 import { TrustedBy } from "@/components/sections/trusted-by"
-import { ResultsBoard } from "@/components/sections/results-board"
 import { CapabilitiesSection } from "@/components/sections/capabilities-section"
 import { ServicesGrid } from "@/components/sections/services-grid"
 import { ProcessSection } from "@/components/sections/process-section"
@@ -30,7 +29,6 @@ export default function HomePage() {
     <SiteLayout>
       <Hero />
       <TrustedBy />
-      <ResultsBoard />
       <CapabilitiesSection />
       <ServicesGrid limit={6} />
       <ProcessSection />

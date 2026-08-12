@@ -27,7 +27,7 @@ export function OrganizationJsonLd() {
     },
     image: `${BASE}/opengraph-image`,
     description:
-      "Hybrid AI tech agency specializing in Agentic AI automation, proactive cybersecurity, Generative Engine Optimization (GEO), and elite custom software development.",
+      "AI/cybersecurity agency leading with Agentic AI automation and Zero Trust cybersecurity — backed by web development, custom software, marketing, and data intelligence.",
     slogan: "AI Powered. Security First. Elite Engineering.",
     foundingDate: "2024",
     areaServed: "Worldwide",
@@ -127,6 +127,34 @@ export function OrganizationJsonLd() {
         },
       ],
     },
+  }} />
+}
+
+// ─── LocalBusiness (root layout) — real MN clients, competing for local search
+// alongside the remote/worldwide ProfessionalService positioning above. No
+// street address is set since none is publicly listed — only what's real.
+export function LocalBusinessJsonLd() {
+  return <Ld schema={{
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${BASE}/#localbusiness`,
+    name: "WebVisionRank",
+    url: BASE,
+    image: `${BASE}/opengraph-image`,
+    email: "support@webvisionrank.com",
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "MN",
+      addressCountry: "US",
+    },
+    areaServed: {
+      "@type": "State",
+      name: "Minnesota",
+    },
+    sameAs: [
+      "https://www.facebook.com/profile.php?id=61576118574498",
+      "https://www.instagram.com/webvisionrank/",
+    ],
   }} />
 }
 
@@ -242,7 +270,10 @@ export function ServicePageJsonLd() {
 }
 
 // ─── Pricing page — FAQPage + Product/PriceSpecification ──────────────────────
-export function PricingFaqJsonLd() {
+// FAQ items are passed in from the page so schema can never drift from the
+// visible on-page FAQ content — a schema/content mismatch is exactly what
+// Google's structured-data guidelines flag as spam.
+export function PricingFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] }) {
   return (
     <>
       <Ld schema={{
@@ -256,80 +287,11 @@ export function PricingFaqJsonLd() {
             { "@type": "ListItem", position: 2, name: "Pricing", item: `${BASE}/pricing` },
           ],
         },
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What does WebVisionRank charge for AI automation?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "WebVisionRank's AI automation is available from $2,500 in the Growth plan. The Ecosystem plan starts at $5,000+ for full-scope custom AI agent development.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Are these one-time project fees or recurring?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Project-based fees. Ongoing support and maintenance can be added as a monthly retainer — pricing depends on scope.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I start with one service and add more later?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Absolutely. Most clients start with a focused engagement and expand as they see results. Every project is designed to be extensible.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What does the project timeline look like?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Foundation projects complete in 4–6 weeks. Growth engagements run 8–12 weeks. Ecosystem builds are scoped individually during discovery.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Do you work with startups or only established businesses?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Both. The Foundation and Growth tiers deliver strong ROI for resource-constrained teams. The Ecosystem tier is for organizations ready to go all-in.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is WebVisionRank?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "WebVisionRank is a hybrid AI tech agency specializing in Agentic AI automation, proactive cybersecurity, Generative Engine Optimization (GEO), and elite custom software development.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is Generative Engine Optimization (GEO)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Generative Engine Optimization (GEO) is the practice of optimizing your digital presence so that AI-powered search engines like ChatGPT, Perplexity, and Google Gemini surface and recommend your brand. Unlike traditional SEO which targets keyword rankings in Google, GEO focuses on being cited as a trusted source by AI models.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How much does AI agent development cost?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Custom AI agent development is included in the Ecosystem plan starting at $5,000. This includes multi-agent orchestration, LLM pipeline development, and workflow automation tailored to your business processes.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does WebVisionRank offer cybersecurity services?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. WebVisionRank provides Zero Trust security architecture, penetration testing, continuous vulnerability monitoring, and security audits. The Ecosystem plan includes Zero Trust architecture as standard.",
-            },
-          },
-        ],
+        mainEntity: faqs.map(({ q, a }) => ({
+          "@type": "Question",
+          name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
       }} />
       <Ld schema={{
         "@context": "https://schema.org",
@@ -490,7 +452,7 @@ export function HowToAiAutomationJsonLd() {
       {
         "@type": "HowToStep",
         name: "Deploy and monitor",
-        text: "Deploy to production with monitoring, cost tracking, and error alerting. Iterate based on real usage. Most businesses see 40% operational cost reduction within 3 months.",
+        text: "Deploy to production with monitoring, cost tracking, and error alerting. Iterate based on real usage and adjust the agent's scope as it proves out.",
         position: 5,
       },
     ],
@@ -536,5 +498,66 @@ export function HowToGeoJsonLd() {
         position: 5,
       },
     ],
+  }} />
+}
+
+// ─── Blog post — BlogPosting schema ────────────────────────────────────────────
+// Author is always the organization — never an individual — matching the
+// no-personal-attribution rule for blog content.
+export function BlogPostingJsonLd({ post }: {
+  post: { title: string; excerpt: string; metaDescription?: string; date: string; updatedAt?: string; slug: string; category: string }
+}) {
+  return <Ld schema={{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.metaDescription ?? post.excerpt,
+    datePublished: post.date,
+    dateModified: post.updatedAt ?? post.date,
+    url: `${BASE}/blog/${post.slug}`,
+    articleSection: post.category,
+    author: { "@type": "Organization", name: "WebVisionRank", url: BASE },
+    publisher: {
+      "@type": "Organization",
+      name: "WebVisionRank",
+      logo: { "@type": "ImageObject", url: `${BASE}/logo.svg` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
+  }} />
+}
+
+// ─── Generic FAQPage schema — used on blog posts ──────────────────────────────
+export function BlogFaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
+  return <Ld schema={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  }} />
+}
+
+// ─── Case study — Article schema (no dedicated CaseStudy type in schema.org) ──
+// Only emitted with real, non-placeholder content — a placeholder-marked
+// summary would make the schema itself an unverifiable claim.
+export function CaseStudyJsonLd({ cs }: {
+  cs: { slug: string; client: string; industry: string; summary: string }
+}) {
+  return <Ld schema={{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${cs.client} Case Study`,
+    description: cs.summary,
+    about: cs.industry,
+    url: `${BASE}/case-studies/${cs.slug}`,
+    author: { "@type": "Organization", name: "WebVisionRank", url: BASE },
+    publisher: {
+      "@type": "Organization",
+      name: "WebVisionRank",
+      logo: { "@type": "ImageObject", url: `${BASE}/logo.svg` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/case-studies/${cs.slug}` },
   }} />
 }
