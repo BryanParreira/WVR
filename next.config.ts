@@ -55,13 +55,15 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       // Turbopack runtime reuses the same filename across builds but changes content,
-      // which breaks immutable caching. Use short TTL so browsers re-fetch after deploys.
+      // which breaks caching entirely: a cached copy from a previous deploy can point
+      // at a chunk that no longer exists post-deploy (404) or has different content.
+      // Force revalidation on every request instead of trusting any cached copy.
       {
         source: "/_next/static/chunks/turbopack-:name(.*)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=3600, stale-while-revalidate=60",
+            value: "no-cache, must-revalidate",
           },
         ],
       },
