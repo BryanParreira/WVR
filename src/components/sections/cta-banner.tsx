@@ -6,42 +6,12 @@ import { AnimateIn } from "@/components/ui/animate-in"
 import { Button } from "@/components/ui/button"
 import { FlipWords } from "@/components/ui/flip-words"
 import { EncryptedText } from "@/components/ui/encrypted-text"
-import { getVerifiedHomepageStats } from "@/lib/case-studies"
 
 const STACK = ["OpenAI", "Anthropic", "AWS", "Google Cloud", "Vercel", "Cloudflare"]
 
 export function CtaBanner() {
-  const metrics = getVerifiedHomepageStats()
-
   return (
     <section className="relative overflow-hidden" style={{ background: "#0a0908" }}>
-
-      {/* Metrics strip — sourced only from verified, case-study-backed results.
-          Grid + gap (no dividers) so it never breaks when it wraps. */}
-      {metrics.length > 0 && (
-        <div className="relative border-b" style={{ borderColor: "rgba(240,237,232,0.06)" }}>
-          <div className="mx-auto max-w-[1200px] px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 py-5">
-              {metrics.map((m) => (
-                <div
-                  key={m.label}
-                  className="flex flex-col gap-0.5"
-                >
-                  <span
-                    className="text-[22px] sm:text-[26px] font-semibold tabular-nums leading-none tracking-[-0.03em]"
-                    style={{ color: "#f0ede8" }}
-                  >
-                    {m.value}
-                  </span>
-                  <span className="text-[11px] mt-1" style={{ color: "#5e5b55", fontFamily: "var(--font-mono)" }}>
-                    {m.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Main CTA */}
       <div className="relative py-24 px-6 sm:py-36 overflow-hidden">

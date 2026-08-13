@@ -1,49 +1,11 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
 import Link from "next/link"
-import { motion, useInView } from "framer-motion"
+import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AgentCard } from "@/components/sections/agent-card"
 import { FlipWords } from "@/components/ui/flip-words"
-import { getVerifiedHomepageStats } from "@/lib/case-studies"
-
-function AnimatedNumber({ value }: { value: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true, margin: "-50px" })
-  const [display, setDisplay] = useState(value)
-
-  useEffect(() => {
-    if (!isInView) return
-    const match = value.match(/([\d.]+)/)
-    if (!match) return
-    const num = parseFloat(match[1])
-    if (num === 0) return
-    const prefix = value.slice(0, match.index ?? 0)
-    const suffix = value.slice((match.index ?? 0) + match[1].length)
-    const isDecimal = num % 1 !== 0
-    const duration = 1400
-    const start = Date.now()
-    const tick = () => {
-      const elapsed = Date.now() - start
-      const t = Math.min(elapsed / duration, 1)
-      const eased = 1 - Math.pow(1 - t, 3)
-      const current = num * eased
-      const formatted = isDecimal ? current.toFixed(1) : Math.round(current).toString()
-      setDisplay(`${prefix}${formatted}${suffix}`)
-      if (t < 1) requestAnimationFrame(tick)
-    }
-    requestAnimationFrame(tick)
-  }, [isInView, value])
-
-  return (
-    <div ref={ref}
-      className="text-[42px] font-semibold text-ink leading-none tracking-[-0.03em] tabular-nums mb-2">
-      {display}
-    </div>
-  )
-}
 
 export function Hero() {
   return (
@@ -158,26 +120,6 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Stats strip — sourced only from verified, case-study-backed results.
-            Hidden until real case study data exists (see src/lib/case-studies.ts). */}
-        {(() => {
-          const stats = getVerifiedHomepageStats()
-          if (stats.length === 0) return null
-          return (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="mt-12 py-8 border-t border-hairline grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-              {stats.map(({ value, label }) => (
-                <div key={label}>
-                  <AnimatedNumber value={value} />
-                  <div className="text-[13px] text-muted">{label}</div>
-                </div>
-              ))}
-            </motion.div>
-          )
-        })()}
       </div>
 
     </section>
