@@ -453,7 +453,7 @@ export function LiveTrafficChart() {
     const start = performance.now()
     const dur   = 1800
     const tick  = (now: number) => {
-      const t    = Math.min((now - start) / dur, 1)
+      const t    = Math.min(Math.max((now - start) / dur, 0), 1)
       const ease = 1 - Math.pow(1 - t, 2)
       setClipW(ease * W)
       if (t < 1) {
@@ -597,7 +597,7 @@ export function ProcessConnector() {
     const start = performance.now()
     const dur   = 2000
     const tick  = (now: number) => {
-      const t    = Math.min((now - start) / dur, 1)
+      const t    = Math.min(Math.max((now - start) / dur, 0), 1)
       const ease = 1 - Math.pow(1 - t, 3)
       setWidth(ease * 100)
       setActive(Math.floor(ease * 4))

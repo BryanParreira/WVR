@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono, Source_Code_Pro } from "next/font/google"
+import { MotionConfig } from "framer-motion"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { OrganizationJsonLd, WebSiteJsonLd, LocalBusinessJsonLd } from "@/components/seo/json-ld"
 import { ScrollProgressBar } from "@/components/ui/scroll-progress"
@@ -117,9 +118,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <Navbar />
-          {children}
-          <Footer />
+          <MotionConfig reducedMotion="user">
+            <Navbar />
+            {children}
+            <Footer />
+          </MotionConfig>
         </ThemeProvider>
       </body>
     </html>

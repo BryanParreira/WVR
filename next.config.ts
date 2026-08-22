@@ -4,10 +4,10 @@ const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com;
   style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com;
-  img-src 'self' blob: data: https://cdn.sanity.io;
+  img-src 'self' blob: data: https://cdn.sanity.io https://hcaptcha.com https://*.hcaptcha.com;
   font-src 'self';
   frame-src https://hcaptcha.com https://*.hcaptcha.com;
-  connect-src 'self' https://*.supabase.co https://api.sanity.io wss://*.supabase.co;
+  connect-src 'self' https://*.supabase.co https://api.sanity.io wss://*.supabase.co https://hcaptcha.com https://*.hcaptcha.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
