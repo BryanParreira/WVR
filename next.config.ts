@@ -52,14 +52,27 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/(.*)",
-        headers: securityHeaders,
+        headers: [
+          ...securityHeaders,
+          // The CDN in front of this site (Hostinger) is not deploy-aware — unlike
+          // Vercel, it doesn't auto-purge on new deploys. Next's default long
+          // s-maxage on static HTML then leaves it serving a page that references
+          // stale chunk hashes from a previous build until the year-long TTL expires.
+          // Keep HTML revalidating often so a new deploy is picked up within minutes.
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=60, stale-while-revalidate=300",
+          },
+        ],
       },
       // Turbopack runtime reuses the same filename across builds but changes content,
       // which breaks caching entirely: a cached copy from a previous deploy can point
       // at a chunk that no longer exists post-deploy (404) or has different content.
       // Force revalidation on every request instead of trusting any cached copy.
+      // Applies to all static chunks, not just turbopack-prefixed ones — the same
+      // filename-reuse behavior affects regular numbered chunks too.
       {
-        source: "/_next/static/chunks/turbopack-:name(.*)",
+        source: "/_next/static/chunks/:name*",
         headers: [
           {
             key: "Cache-Control",
